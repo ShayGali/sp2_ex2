@@ -24,8 +24,8 @@ TEST_CASE("Test loadGraph for Directed Graph") {
         // clang-format on
     };
     g.loadGraph(graph);
-    vector<vector<int>> ajdList = g.getGraph();
-    CHECK(std::equal(graph.begin(), graph.end(), ajdList.begin()));
+    vector<vector<int>> adjMat = g.getGraph();
+    CHECK(std::equal(graph.begin(), graph.end(), adjMat.begin()));
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // the graph is not a square matrix
@@ -64,8 +64,8 @@ TEST_CASE("Test loadGraph for undirected graph") {
         // clang-format on
     };
     g.loadGraph(graph);
-    vector<vector<int>> ajdList = g.getGraph();
-    CHECK(std::equal(graph.begin(), graph.end(), ajdList.begin()));
+    vector<vector<int>> adjMat = g.getGraph();
+    CHECK(std::equal(graph.begin(), graph.end(), adjMat.begin()));
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // the graph is not a square matrix
@@ -152,11 +152,10 @@ TEST_CASE("Test printGraph") {
     buffer.str("");
     g_undir.loadGraph(emptyGraph);
     g_undir.printGraph();
-    
+
     // Restore std::cout to its original buffer
     std::cout.rdbuf(prevcoutbuf);
     CHECK(buffer.str() == "Undirected graph with 0 vertices and 0 edges.\n");
-
 }
 
 TEST_CASE("Test isConnected for directed graph") {

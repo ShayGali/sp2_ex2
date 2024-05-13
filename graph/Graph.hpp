@@ -29,22 +29,12 @@ bool matrixEqual(const vector<vector<int>>& mat1, const vector<vector<int>>& mat
  */
 class Graph {
    private:
-    vector<vector<int>> ajdList;
+    vector<vector<int>> adjMat;
     bool isDirected;
     bool isWeighted;
     bool haveNegativeEdgeWeight;
 
-    /**
-     * @brief change the weight of an edge between two vertices.
-     * @note this function dont care about symmetry of the matrix of a undirected graph.
-     * @param u the first vertex
-     * @param v the second vertex
-     * @param weight the new weight of the edge
-     * @throw invalid_argument if the vertices are invalid
-     */
-    void changeEdgeWeight(size_t u, size_t v, int weight);
-
-    /**
+      /**
      * @brief modify the weights of the edges in the graph using a function
      * @note if func return 0, the edge will be removed.
      * @param func the function that will be applied to the weights of the edges, will take the current weight as an argument and change it.
@@ -61,6 +51,12 @@ class Graph {
      */
     void modifyEdgeWeights(const Graph& other, function<int(int, int)> func);
 
+    /**
+     * @brief update the isWeighted and haveNegativeEdgeWeight fields if needed.
+     * check if a directed graph is a symmetric matrix
+     */
+    void updateData();
+
    public:
     /**
      * @brief Construct a new Graph object
@@ -70,11 +66,11 @@ class Graph {
 
     /**
      * @brief Load the graph from an adjacency matrix
-     * @param ajdList the adjacency matrix
+     * @param adjMat the adjacency matrix
      * @throw invalid_argument if the graph is not a square matrix or the diagonal of the matrix is not NO_EDGE
      * @throw invalid_argument if the graph is undirected and the matrix is not symmetric
      */
-    void loadGraph(const vector<vector<int>>& ajdList);
+    void loadGraph(const vector<vector<int>>& adjMat);
 
     /**
      * @brief Print the graph as an adjacency matrix
@@ -271,16 +267,16 @@ class Graph {
         // do matrix multiplication on the adjacency matrices
         // adjList[i][j] = sum(adjList[i][k] * adjList[k][j]) for all k
         for (size_t i = 0; i < getNumVertices(); i++) {
-            for (size_t j = 0; j < ajdList[i].size(); j++) {
+            for (size_t j = 0; j < adjMat[i].size(); j++) {
                 int sum = 0;
                 for (size_t k = 0; k < getNumVertices(); k++) {
-                    if (ajdList[i][k] != NO_EDGE && other.ajdList[k][j] != NO_EDGE)
-                        sum += ajdList[i][k] * other.ajdList[k][j];
+                    if (adjMat[i][k] != NO_EDGE && other.adjMat[k][j] != NO_EDGE)
+                        sum += adjMat[i][k] * other.adjMat[k][j];
                 }
                 if (sum != 0) {
-                    g.changeEdgeWeight(i, j, sum);
+                    g.adjMat[i][j] = sum;
                 } else {
-                    g.changeEdgeWeight(i, j, NO_EDGE);
+                    g.adjMat[i][j] = NO_EDGE;
                 }
             }
         }
@@ -380,27 +376,27 @@ class Graph {
      */
     bool operator<(const Graph& other) const {
         // if they both empty graphs (no vertices and edges) return false
-        if (this->ajdList.empty() && other.ajdList.empty()) {
+        if (this->adjMat.empty() && other.adjMat.empty()) {
             return false;
         }
 
         // if the current graph is empty and the other graph is not empty, return true (A is submatrix of B)
-        if (this->ajdList.empty()) {
+        if (this->adjMat.empty()) {
             return true;
         }
 
         // if the other graph is empty and the current graph is not empty, return false
-        if (other.ajdList.empty()) {
+        if (other.adjMat.empty()) {
             return false;
         }
 
         // if the two graphs have the same adjacency matrix, return false
-        if (matrixEqual(this->ajdList, other.ajdList)) {
+        if (matrixEqual(this->adjMat, other.adjMat)) {
             return false;
         }
 
         // check if the adjacency matrix of the current graph is submatrix of the adjacency matrix of the other graph
-        if (isSubMatrix(this->ajdList, other.ajdList)) {
+        if (isSubMatrix(this->adjMat, other.adjMat)) {
             return true;
         }
         // A is not a submatrix of B - check the number of edges
@@ -458,9 +454,9 @@ class Graph {
 
         for (size_t i = 0; i < graph.getNumVertices(); i++) {
             os << i << ": ";
-            for (size_t j = 0; j < graph.ajdList[i].size(); j++) {
-                if (graph.ajdList[i][j] != NO_EDGE)
-                    os << graph.ajdList[i][j] << " ";
+            for (size_t j = 0; j < graph.adjMat[i].size(); j++) {
+                if (graph.adjMat[i][j] != NO_EDGE)
+                    os << graph.adjMat[i][j] << " ";
                 else
                     os << "X ";
             }

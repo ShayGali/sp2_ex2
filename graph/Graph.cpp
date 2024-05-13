@@ -20,11 +20,8 @@ Graph::Graph(bool isDirected) {
     this->haveNegativeEdgeWeight = false;
 }
 
-void Graph::loadGraph(const vector<vector<int>>& ajdList) {
-    this->isWeighted = false;
-    this->haveNegativeEdgeWeight = false;
-
-    this->ajdList = ajdList;
+void Graph::loadGraph(const vector<vector<int>>& adjMat) {
+    this->adjMat = adjMat;
     /*
      * update the isWeighted and haveNegativeEdgeWeight fields.
      * create an deep copy of the adjacency list.
@@ -32,52 +29,35 @@ void Graph::loadGraph(const vector<vector<int>>& ajdList) {
 
     // check if the graph is a square matrix
     // check if the diagonal of the matrix is 0
-    for (size_t i = 0; i < ajdList.size(); i++) {
-        if (ajdList.size() != ajdList[i].size()) {
-            throw invalid_argument("Invalid graph: The graph is not a square matrix.(" + std::to_string(i) + "th row has " + std::to_string(ajdList[i].size()) + " elements.)");
+    for (size_t i = 0; i < adjMat.size(); i++) {
+        if (adjMat.size() != adjMat[i].size()) {
+            throw invalid_argument("Invalid graph: The graph is not a square matrix.(" + std::to_string(i) + "th row has " + std::to_string(adjMat[i].size()) + " elements.)");
         }
-        if (ajdList[i][i] != NO_EDGE) {
+        if (adjMat[i][i] != NO_EDGE) {
             throw invalid_argument("The diagonal of the matrix must be NO_EDGE. (the " + std::to_string(i) + "th node is not a NO_EDGE)");
         }
     }
 
-    // update the isWeighted and haveNegativeEdgeWeight fields if needed
-    // check if a directed graph is a symmetric matrix
-    for (size_t i = 0; i < ajdList.size(); i++) {
-        for (size_t j = 0; j < ajdList[i].size(); j++) {
-            if (ajdList[i][j] != NO_EDGE) {
-                if (ajdList[i][j] != 1) {
-                    this->isWeighted = true;
-                }
-                if (ajdList[i][j] < 0) {
-                    this->haveNegativeEdgeWeight = true;
-                }
-            }
-
-            if (!this->isDirected && ajdList[i][j] != ajdList[j][i]) {
-                throw invalid_argument("Invalid graph: The graph is not symmetric.(mat[" + std::to_string(i) + "][" + std::to_string(j) + "] = " + std::to_string(ajdList[i][j]) + " and mat[" + std::to_string(j) + "][" + std::to_string(i) + "] = " + std::to_string(ajdList[j][i]) + ")");
-            }
-        }
-    }
+    updateData();
 }
 
 void Graph::printGraph() const {
     int count_edges = getNumEdges();
     if (this->isDirected) {
-        std::cout << "Directed graph with " << ajdList.size() << " vertices and " << count_edges << " edges." << std::endl;
+        std::cout << "Directed graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
     } else {
-        std::cout << "Undirected graph with " << ajdList.size() << " vertices and " << count_edges / 2 << " edges." << std::endl;
+        std::cout << "Undirected graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
     }
 }
 
 void Graph::printAdjMat() const {
     this->printGraph();
 
-    for (size_t i = 0; i < ajdList.size(); i++) {
+    for (size_t i = 0; i < adjMat.size(); i++) {
         std::cout << i << ": ";
-        for (size_t j = 0; j < ajdList[i].size(); j++) {
-            if (ajdList[i][j] != NO_EDGE) {
-                std::cout << ajdList[i][j] << " ";
+        for (size_t j = 0; j < adjMat[i].size(); j++) {
+            if (adjMat[i][j] != NO_EDGE) {
+                std::cout << adjMat[i][j] << " ";
             } else {
                 std::cout << "X ";
             }
@@ -86,7 +66,7 @@ void Graph::printAdjMat() const {
     }
 }
 
-vector<vector<int>> Graph::getGraph() const { return this->ajdList; }
+vector<vector<int>> Graph::getGraph() const { return this->adjMat; }
 
 bool Graph::isDirectedGraph() const { return this->isDirected; }
 bool Graph::isWeightedGraph() const { return this->isWeighted; }
@@ -94,13 +74,14 @@ bool Graph::isWeightedGraph() const { return this->isWeighted; }
 bool Graph::isHaveNegativeEdgeWeight() const { return this->haveNegativeEdgeWeight; }
 
 size_t Graph::getNumVertices() const {
-    return this->ajdList.size();
+    return this->adjMat.size();
 }
+
 size_t Graph::getNumEdges() const {
     size_t count_edges = 0;
-    for (size_t i = 0; i < ajdList.size(); i++) {
-        for (size_t j = 0; j < ajdList[i].size(); j++) {
-            if (ajdList[i][j] != NO_EDGE) {
+    for (size_t i = 0; i < adjMat.size(); i++) {
+        for (size_t j = 0; j < adjMat[i].size(); j++) {
+            if (adjMat[i][j] != NO_EDGE) {
                 count_edges++;
             }
         }
@@ -108,37 +89,49 @@ size_t Graph::getNumEdges() const {
 
     // if the graph is undirected, the number of edges is half
     if (!this->isDirected) {
-        // count_edges /= 2;
+        count_edges /= 2;
     }
     return count_edges;
 }
 
-void Graph::changeEdgeWeight(size_t u, size_t v, int weight) {
-    if (u < 0 || v < 0 || u >= getNumVertices() || v >= getNumVertices()) {
-        throw std::invalid_argument("Invalid vertices.");
-    }
-    if (weight < 0) {
-        this->haveNegativeEdgeWeight = true;
-    }
-    if (weight != 1) {
-        this->isWeighted = true;
-    }
-    ajdList[u][v] = weight;
-}
+void Graph::updateData() {
+    this->isWeighted = false;
+    this->haveNegativeEdgeWeight = false;
 
-void Graph::modifyEdgeWeights(function<int(int)> func) {
-    for (size_t u = 0; u < getNumVertices(); u++) {
-        for (size_t v = 0; v < ajdList[u].size(); v++) {
-            if (ajdList[u][v] != NO_EDGE) {
-                int res = func(ajdList[u][v]);
-                if (res == 0) {
-                    changeEdgeWeight(u, v, NO_EDGE);
-                } else {
-                    changeEdgeWeight(u, v, res);
+    for (size_t i = 0; i < adjMat.size(); i++) {
+        for (size_t j = 0; j < adjMat[i].size(); j++) {
+            if (adjMat[i][j] != NO_EDGE) {
+                if (adjMat[i][j] != 1) {
+                    this->isWeighted = true;
+                }
+
+                if (adjMat[i][j] < 0) {
+                    this->haveNegativeEdgeWeight = true;
+                }
+
+                if (!this->isDirected && adjMat[i][j] != adjMat[j][i]) {
+                    throw invalid_argument("Invalid graph: The graph is not symmetric.(mat[" + std::to_string(i) + "][" + std::to_string(j) + "] = " + std::to_string(adjMat[i][j]) + " and mat[" + std::to_string(j) + "][" + std::to_string(i) + "] = " + std::to_string(adjMat[j][i]) + ")");
                 }
             }
         }
     }
+}
+
+void Graph::modifyEdgeWeights(function<int(int)> func) {
+    for (size_t u = 0; u < getNumVertices(); u++) {
+        for (size_t v = 0; v < adjMat[u].size(); v++) {
+            if (adjMat[u][v] != NO_EDGE) {
+                int res = func(adjMat[u][v]);
+                if (res == 0) {
+                    adjMat[u][v] = NO_EDGE;
+                } else {
+                    adjMat[u][v] = res;
+                }
+            }
+        }
+    }
+
+    updateData();
 }
 
 void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) {
@@ -151,17 +144,25 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
     }
 
     for (size_t u = 0; u < getNumVertices(); u++) {
-        for (size_t v = 0; v < ajdList[u].size(); v++) {
-            if (ajdList[u][v] != NO_EDGE) {
-                int res = func(ajdList[u][v], other.ajdList[u][v]);
-                if (res == 0) {
-                    changeEdgeWeight(u, v, NO_EDGE);
+        for (size_t v = 0; v < getNumVertices(); v++) {
+            if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] == NO_EDGE) {
+                adjMat[u][v] = NO_EDGE;
+            } else if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] != NO_EDGE) {
+                adjMat[u][v] = other.adjMat[u][v];
+            } else if (adjMat[u][v] != NO_EDGE && other.adjMat[u][v] == NO_EDGE) {
+                adjMat[u][v] = adjMat[u][v];
+            } else {
+                int res = func(adjMat[u][v], other.adjMat[u][v]);
+                if (res == 0 || res == NO_EDGE) {
+                    adjMat[u][v] = NO_EDGE;
                 } else {
-                    changeEdgeWeight(u, v, res);
+                    adjMat[u][v] = res;
                 }
             }
         }
     }
+
+    updateData();
 }
 
 // ~~~ helper functions ~~~
