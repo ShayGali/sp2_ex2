@@ -2,6 +2,7 @@
  * @author Shay Gali
  * @link shay.gali@msmail.ariel.ac.il
  */
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -100,6 +101,7 @@ TEST_CASE("Test loadGraph for undirected graph") {
 }
 
 TEST_CASE("Test printGraph") {
+    // Redirect std::cout to a buffer
     std::stringstream buffer;
     std::streambuf* prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
 
@@ -119,31 +121,42 @@ TEST_CASE("Test printGraph") {
 
     g_dir.printGraph();
 
+    // Restore std::cout to its original buffer
+    std::cout.rdbuf(prevcoutbuf);
     CHECK(buffer.str() == "Directed graph with 3 vertices and 6 edges.\n");
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
     buffer.str("");
     g_undir.loadGraph(graph);
     g_undir.printGraph();
+    std::cout.rdbuf(prevcoutbuf);
 
     CHECK(buffer.str() == "Undirected graph with 3 vertices and 3 edges.\n");
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
+
     // empty graph
     buffer.str("");
 
     vector<vector<int>> emptyGraph = {};
     g_dir.loadGraph(emptyGraph);
     g_dir.printGraph();
+    std::cout.rdbuf(prevcoutbuf);
+
     CHECK(buffer.str() == "Directed graph with 0 vertices and 0 edges.\n");
 
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
     buffer.str("");
     g_undir.loadGraph(emptyGraph);
     g_undir.printGraph();
-    CHECK(buffer.str() == "Undirected graph with 0 vertices and 0 edges.\n");
-
+    
     // Restore std::cout to its original buffer
     std::cout.rdbuf(prevcoutbuf);
+    CHECK(buffer.str() == "Undirected graph with 0 vertices and 0 edges.\n");
+
 }
 
 TEST_CASE("Test isConnected for directed graph") {
