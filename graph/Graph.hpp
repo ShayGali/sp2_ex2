@@ -13,7 +13,7 @@ using std::function;
 using std::vector;
 
 #define INF std::numeric_limits<int>::max()  // represent infinity
-#define NO_EDGE 0                      // represent no edge between two vertices as infinity
+#define NO_EDGE 0                            // represent no edge between two vertices as infinity
 
 namespace shayg {
 
@@ -228,9 +228,8 @@ class Graph {
      * @brief prefix -- operator
      * Will decrement the weight of all edges by 1.
      * If the weight of an edge is NO_EDGE, it will remain NO_EDGE.
-     * If the weight of an edge is 0, then the edge will be removed.
+     * If the weight of an edge is 1, then the edge will be removed.
      * @return a reference to the current graph after decrementing the weight of all edges by 1.
-     * @note if the weight of an edge is 0, the edge will be removed.
      *
      */
     Graph& operator--() {
@@ -238,17 +237,33 @@ class Graph {
         return *this;
     }
 
-    // Overload the postfix -- operator
+    /**
+     * @brief postfix -- operator
+     * Will decrement the weight of all edges by 1.
+     * If the weight of an edge is NO_EDGE, it will remain NO_EDGE.
+     * If the weight of an edge is 1, then the edge will be removed.
+     */
     Graph operator--(int) {
         Graph g = *this;
         g.modifyEdgeWeights([](int weight) { return weight - 1; });
         return g;
     }
 
-    // Overload the * operator
+    /**
+     * @brief Binary * operator
+     * Will return a new graph that is the matrix multiplication of the two graphs. (the matrix multiplication of the adjacency matrices)
+     * If AB(u, v) = 0, the edge will be removed.
+     * @param other the other graph
+     * @return a new graph that is the matrix multiplication of the two graphs
+     * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
+     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
+     */
     Graph operator*(const Graph& other) const {
         if (this->getNumVertices() != other.getNumVertices()) {
             throw std::invalid_argument("The two graphs have different number of vertices.");
+        }
+        if (this->isDirected != other.isDirected) {
+            throw std::invalid_argument("The two graphs are not the same type (directed/undirected).");
         }
 
         Graph g = *this;
@@ -272,18 +287,41 @@ class Graph {
         return g;
     }
 
-    // Overload the *= operator
+    /**
+     * @brief *= operator
+     * Will multiply the current graph by the other graph.
+     * If AB(u, v) = 0, the edge will be removed.
+     * @param other the other graph
+     * @return a reference to the current graph after multiplying it by the other graph
+     * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
+     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
+     */
     Graph& operator*=(const Graph& other) {
         *this = *this * other;  // call the * operator and assign the result to the current graph
         return *this;
     }
 
+    /**
+     * @brief Binary * operator with a scalar
+     * Will return a new graph that is the current graph multiplied by a scalar.
+     * If A(u, v) * factor = 0, the edge will be removed. (iff factor = 0 || A(u, v) = 0)
+     *
+     * @param factor the scalar
+     * @return a new graph that is the current graph multiplied by a scalar
+     */
     Graph operator*(int factor) const {
         Graph g = *this;
         g.modifyEdgeWeights([factor](int weight) { return weight * factor; });
         return g;
     }
 
+    /**
+     * @brief *= operator with a scalar
+     * Will multiply the current graph by a scalar.
+     * If A(u, v) * factor = 0, the edge will be removed. (iff factor = 0 || A(u, v) = 0)
+     * @param factor the scalar
+     * @return a reference to the current graph after multiplying it by a scalar
+     */
     Graph& operator*=(int factor) {
         *this = *this * factor;
         return *this;
@@ -305,29 +343,24 @@ class Graph {
         }
 
     */
+
     // ~~~ Comparison operators ~~~
-
-    // Overload the == operator
+    /**
+     * @brief Overload the == operator
+     * A == B if the adjacency matrices of the two graphs are the same.
+     * or if not A < B and not B < A
+     */
     bool operator==(const Graph& other) const {
-        // check if the two graphs have the same number of vertices
-        if (this->getNumVertices() != other.getNumVertices()) {
-            return false;
-        }
-
-        // check if the two graphs have the same adjacency matrix
-        for (size_t i = 0; i < getNumVertices(); i++) {
-            for (size_t j = 0; j < ajdList[i].size(); j++) {
-                if (ajdList[i][j] != other.ajdList[i][j]) {
-                    return false;
-                }
-            }
-        }
-
-        throw std::runtime_error("The operator Binary == is not implemented yet.");
-        return false;
+        // !(A < B) && !(B < A)) == !(A < B || B < A)
+        return !(*this < other || other < *this);
     }
 
-    // Overload the != operator
+    /**
+     * @brief Overload the != operator
+     * will return the opposite of the == operator
+     * @param other the other graph
+     * @return true if the current graph is not equal to the other graph, false otherwise
+     */
     bool operator!=(const Graph& other) const {
         return !(*this == other);
     }
@@ -385,18 +418,30 @@ class Graph {
         }
     }
 
-    // Overload the > operator
-    bool
-    operator>(const Graph& other) const {
+    /**
+     * @brief Overload the > operator
+     * will return the opposite of the < operator
+     * @param other the other graph
+     * @return true if the current graph is greater than the other graph, false otherwise
+     */
+    bool operator>(const Graph& other) const {
         return other < *this;
     }
 
-    // Overload the <= operator
+    /**
+     * @brief Overload the <= operator
+     * @param other the other graph
+     * @return true if the current graph is less than or equal to the other graph, false otherwise
+     */
     bool operator<=(const Graph& other) const {
         return *this < other || *this == other;
     }
 
-    // Overload the >= operator
+    /**
+     * @brief Overload the >= operator
+     * @param other the other graph
+     * @return true if the current graph is greater than or equal to the other graph, false otherwise
+     */
     bool operator>=(const Graph& other) const {
         return *this > other || *this == other;
     }
