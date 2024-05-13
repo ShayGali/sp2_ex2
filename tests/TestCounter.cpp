@@ -16,6 +16,12 @@ struct ReporterCounter : public ConsoleReporter {
             std::cout << "Please write at least " << MIN_TESTS << " tests! " << std::endl;
             return_code = 1;
         }
+        // Print summary
+        std::cout << "\nTest run summary:\n";
+        std::cout << "Number of assertions: " << run_stats.numAsserts << "\n";
+        std::cout << "Number of failed assertions: " << run_stats.numAssertsFailed << "\n";
+        std::cout << "Number of test cases passed: " << run_stats.numTestCases - run_stats.numTestCasesFailed << "\n";
+        std::cout << "Number of test cases failed: " << run_stats.numTestCasesFailed << "\n";
     }
 };
 
