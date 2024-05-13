@@ -78,7 +78,6 @@ void Graph::printGraph() const {
 }
 
 void Graph::printAdjMat() const {
-
     this->printGraph();
 
     for (size_t i = 0; i < ajdList.size(); i++) {
@@ -100,3 +99,113 @@ bool Graph::isDirectedGraph() const { return this->isDirected; }
 bool Graph::isWeightedGraph() const { return this->isWeighted; }
 
 bool Graph::isHaveNegativeEdgeWeight() const { return this->haveNegativeEdgeWeight; }
+
+size_t Graph::getNumVertices() const {
+    return this->ajdList.size();
+}
+size_t Graph::getNumEdges() const {
+    size_t count_edges = 0;
+    for (size_t i = 0; i < ajdList.size(); i++) {
+        for (size_t j = 0; j < ajdList[i].size(); j++) {
+            if (ajdList[i][j] != NO_EDGE) {
+                count_edges++;
+            }
+        }
+    }
+    return count_edges;
+}
+
+void Graph::changeEdgeWeight(size_t u, size_t v, int weight) {
+    if (u < 0 || v < 0 || u >= getNumVertices() || v >= getNumVertices()) {
+        throw std::invalid_argument("Invalid vertices.");
+    }
+    if (weight < 0) {
+        this->haveNegativeEdgeWeight = true;
+    }
+    if (weight != 1) {
+        this->isWeighted = true;
+    }
+    ajdList[u][v] = weight;
+}
+
+void Graph::modifyEdgeWeights(function<int(int)> func) {
+    for (size_t u = 0; u < getNumVertices(); u++) {
+        for (size_t v = 0; v < ajdList[u].size(); v++) {
+            if (ajdList[u][v] != NO_EDGE) {
+                int res = func(ajdList[u][v]);
+                if (res == 0) {
+                    changeEdgeWeight(u, v, NO_EDGE);
+                } else {
+                    changeEdgeWeight(u, v, res);
+                }
+            }
+        }
+    }
+}
+
+void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) {
+    if (this->getNumVertices() != other.getNumVertices()) {
+        throw std::invalid_argument("The two graphs have different number of vertices.");
+    }
+
+    if (this->isDirected != other.isDirected) {
+        throw std::invalid_argument("The two graphs are not the same type.");
+    }
+
+    for (size_t u = 0; u < getNumVertices(); u++) {
+        for (size_t v = 0; v < ajdList[u].size(); v++) {
+            if (ajdList[u][v] != NO_EDGE) {
+                int res = func(ajdList[u][v], other.ajdList[u][v]);
+                if (res == 0) {
+                    changeEdgeWeight(u, v, NO_EDGE);
+                } else {
+                    changeEdgeWeight(u, v, res);
+                }
+            }
+        }
+    }
+}
+
+// ~~~ helper functions ~~~
+
+bool isSubMatrix(const vector<vector<int>>& subMatrix, const vector<vector<int>>& matrix) {
+    if (subMatrix.size() > matrix.size()) {
+        return false;
+    }
+
+    for (size_t i = 0; i <= matrix.size() - subMatrix.size(); i++) {
+        for (size_t j = 0; j <= matrix.size() - subMatrix.size(); j++) {
+            bool match = true;
+            for (size_t k = 0; k < subMatrix.size(); k++) {
+                for (size_t l = 0; l < subMatrix.size(); l++) {
+                    if (subMatrix[k][l] != matrix[i + k][j + l]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (!match) {
+                    break;
+                }
+            }
+            if (match) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool matrixEqual(const vector<vector<int>>& mat1, const vector<vector<int>>& mat2) {
+    if (mat1.size() != mat2.size()) {
+        return false;
+    }
+
+    for (size_t i = 0; i < mat1.size(); i++) {
+        for (size_t j = 0; j < mat1[i].size(); j++) {
+            if (mat1[i][j] != mat2[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}

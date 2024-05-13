@@ -294,18 +294,23 @@ string Algorithms::negativeCycle(const Graph& g) {
     bool isDirected = g.isDirectedGraph();
 
     vector<vector<int>> newGraphMat(n + 1, vector<int>(n + 1, INF));
+    // copy the graph to the new graph
     for (size_t i = 0; i < n; i++) {
         for (size_t j = 0; j < n; j++) {
+            if (i == j) {
+                newGraphMat[i][j] = NO_EDGE;
+            }
             if (g.getGraph()[i][j] != NO_EDGE) {
                 newGraphMat[i][j] = g.getGraph()[i][j];
             }
         }
     }
 
-    // connect the new vertex to all the other vertices with an edge of weight 0
+    // connect the new vertex to all the other vertices with an edge of weight 0 (if NO_EDGE = 0 we will put -1)
     for (size_t i = 0; i < n; i++) {
-        newGraphMat[n][i] = 0;
+        newGraphMat[n][i] = NO_EDGE != 0 ? 0 : -1;
     }
+    newGraphMat[n][n] = NO_EDGE;
 
     newGraph.loadGraph(newGraphMat);
 

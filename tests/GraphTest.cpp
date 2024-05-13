@@ -26,8 +26,8 @@ TEST_CASE("unary +") {
     g1.loadGraph(graph);
 
     Graph g2 = +g1;
-    CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
-    CHECK(&g1 != &g2);                        // check if the address is different
+    CHECK(g1.getGraph() == g2.getGraph());  // check if the adjacency matrix have the same values
+    CHECK(&g1 != &g2);                      // check if the address is different
 }
 
 TEST_CASE("unary -") {
@@ -79,7 +79,12 @@ TEST_CASE("Binary +") {
     Graph g3 = g1 + g2;
     for (size_t i = 0; i < graph1.size(); i++) {
         for (size_t j = 0; j < graph1[i].size(); j++) {
-            CHECK(g3.getGraph()[i][j] == graph1[i][j] + graph2[i][j]);  // check if the edge is the sum of the original edges
+            if (graph1[i][j] == NO_EDGE || graph2[i][j] == NO_EDGE)
+                CHECK(g3.getGraph()[i][j] == NO_EDGE);  // check if the edge is NO_EDGE
+            else if (graph1[i][j] + graph2[i][j] == 0) {
+                CHECK(g3.getGraph()[i][j] == NO_EDGE);
+            } else
+                CHECK(g3.getGraph()[i][j] == graph1[i][j] + graph2[i][j]);  // check if the edge is the sum of the original edges
         }
     }
     CHECK(&g1 != &g3);  // check if the address is different
