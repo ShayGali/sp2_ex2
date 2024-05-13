@@ -62,14 +62,7 @@ void Graph::loadGraph(const vector<vector<int>>& ajdList) {
 }
 
 void Graph::printGraph() const {
-    int count_edges = 0;
-    for (size_t i = 0; i < ajdList.size(); i++) {
-        for (size_t j = 0; j < ajdList[i].size(); j++) {
-            if (ajdList[i][j] != NO_EDGE) {
-                count_edges++;
-            }
-        }
-    }
+    int count_edges = getNumEdges();
     if (this->isDirected) {
         std::cout << "Directed graph with " << ajdList.size() << " vertices and " << count_edges << " edges." << std::endl;
     } else {
@@ -111,6 +104,11 @@ size_t Graph::getNumEdges() const {
                 count_edges++;
             }
         }
+    }
+
+    // if the graph is undirected, the number of edges is half
+    if (!this->isDirected) {
+        // count_edges /= 2;
     }
     return count_edges;
 }
