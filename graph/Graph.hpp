@@ -70,10 +70,23 @@ class Graph {
      * the output will be like this:
      * "Directed/Undirected graph with |V| vertices and |E| edges."
      * where |V| is the number of vertices and |E| is the number of edges.
+     *
+     * @param os the output stream. Default is std::cout
      */
-    void printGraph() const;
+    void printGraph(std::ostream& = std::cout) const;
 
-    void printAdjMat() const;
+    /**
+     * @brief Print the adjacency matrix of the graph
+     * will print a data about the graph with the printGraph function
+     * the output will be like this:
+     * "Directed/Undirected graph with |V| vertices and |E| edges."
+     * 0: 0 1 2
+     * 1: 3 0 4
+     * 2: 5 6 0
+     *
+     * @param os the output stream. Default is std::cout
+     */
+    void printAdjMat(std::ostream& = std::cout) const;
 
     /**
      * @brief return the adjacency matrix of the graph
@@ -383,19 +396,8 @@ class Graph {
      *
      */
     friend std::ostream& operator<<(std::ostream& os, const Graph& graph) {
-        graph.printGraph();
-
-        for (size_t i = 0; i < graph.getNumVertices(); i++) {
-            os << i << ": ";
-            for (size_t j = 0; j < graph.adjMat[i].size(); j++) {
-                if (graph.adjMat[i][j] != NO_EDGE)
-                    os << graph.adjMat[i][j] << " ";
-                else
-                    os << "X ";
-            }
-            os << std::endl;
-        }
-
+        graph.printGraph(os);
+        graph.printAdjMat(os);
         return os;
     }
 };

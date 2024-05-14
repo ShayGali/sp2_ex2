@@ -36,28 +36,26 @@ void Graph::loadGraph(const vector<vector<int>>& adjMat) {
     updateData();
 }
 
-void Graph::printGraph() const {
+void Graph::printGraph(std::ostream& out) const {
     int count_edges = getNumEdges();
     if (this->isDirected) {
-        std::cout << "Directed graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
+        out << "Directed graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
     } else {
-        std::cout << "Undirected graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
+        out << "Undirected graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
     }
 }
 
-void Graph::printAdjMat() const {
-    this->printGraph();
-
+void Graph::printAdjMat(std::ostream& out) const {
     for (size_t i = 0; i < adjMat.size(); i++) {
-        std::cout << i << ": ";
+        out << i << ": ";
         for (size_t j = 0; j < adjMat[i].size(); j++) {
             if (adjMat[i][j] != NO_EDGE) {
-                std::cout << adjMat[i][j] << " ";
+                out << adjMat[i][j] << " ";
             } else {
-                std::cout << "X ";
+                out << "X ";
             }
         }
-        std::cout << std::endl;
+        out << std::endl;
     }
 }
 
