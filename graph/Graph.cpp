@@ -101,6 +101,8 @@ void Graph::updateData() {
     }
 }
 
+// ~~~ helper functions for the operators ~~~
+
 void Graph::modifyEdgeWeights(function<int(int)> func) {
     this->isWeighted = false;
     this->haveNegativeEdgeWeight = false;
@@ -167,8 +169,6 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
     }
 }
 
-// ~~~ helper functions ~~~
-
 bool isSubMatrix(const vector<vector<int>>& subMatrix, const vector<vector<int>>& matrix) {
     if (subMatrix.size() > matrix.size()) {
         return false;
@@ -211,7 +211,7 @@ bool matrixEqual(const vector<vector<int>>& mat1, const vector<vector<int>>& mat
     return true;
 }
 
-// operator overloading
+// ~~~~ operators ~~~~
 
 Graph Graph::operator*(const Graph& other) const {
     if (this->getNumVertices() != other.getNumVertices()) {
