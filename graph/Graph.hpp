@@ -87,6 +87,7 @@ class Graph {
      * @return vector<vector<int>> the adjacency matrix
      */
     vector<vector<int>> getGraph() const;
+    vector<vector<int>>& getGraphRef() { return adjMat; }
 
     /**
      * @brief get the number of vertices and edges in the graph
@@ -355,6 +356,7 @@ class Graph {
     }
 
     // ~~~ Comparison operators ~~~
+
     /**
      * @brief Overload the == operator
      * A == B if the adjacency matrices of the two graphs are the same.

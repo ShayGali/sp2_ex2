@@ -151,9 +151,11 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
         throw std::invalid_argument("The two graphs are not the same type (directed/undirected).");
     }
 
+    this->isWeighted = false;
+    this->haveNegativeEdgeWeight = false;
+
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
-            
             if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] == NO_EDGE) { // if they are both NO_EDGE - the result edge is NO_EDGE
                 adjMat[u][v] = NO_EDGE;
             } else if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] != NO_EDGE) { // if one of them is NO_EDGE - the result edge is the other one  
@@ -166,14 +168,15 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
                     adjMat[u][v] = NO_EDGE;
                 } else { 
                     adjMat[u][v] = res;
+                }
+            }
 
-                    // update data if needed
-                    if (res != 1) {
-                        this->isWeighted = true;
-                    }
-                    if (res < 0) {
-                        this->haveNegativeEdgeWeight = true;
-                    }
+            if(adjMat[u][v] != NO_EDGE) {
+                if (adjMat[u][v] != 1) {
+                    this->isWeighted = true;
+                }
+                if (adjMat[u][v] < 0) {
+                    this->haveNegativeEdgeWeight = true;
                 }
             }
         }
