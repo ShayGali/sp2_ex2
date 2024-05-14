@@ -34,7 +34,7 @@ class Graph {
     bool isWeighted;
     bool haveNegativeEdgeWeight;
 
-      /**
+    /**
      * @brief modify the weights of the edges in the graph using a function
      * @note if func return 0, the edge will be removed.
      * @param func the function that will be applied to the weights of the edges, will take the current weight as an argument and change it.
@@ -323,22 +323,36 @@ class Graph {
         return *this;
     }
 
-    /* TODO: check if needed
-        Graph operator/(int factor) const {
-            if (factor == 0) {
-                throw std::invalid_argument("Division by zero.");
-            }
-            Graph g = *this;
-            g.modifyEdgeWeights([factor](int weight) { return weight / factor; });
-            return g;
-        }
-
-        Graph& operator/=(int factor) {
-            *this = *this / factor;
-            return *this;
-        }
-
+    /**
+     * @brief Binary / operator with a scalar   
+     * Will return a new graph that is the current graph divided by a scalar.
+     * If A(u, v) / factor = 0, the edge will be removed. (iff A(u, v) = 0)
+     * @param factor the scalar (the divisor)
+     * @return a new graph that is the current graph divided by a scalar
+     * @throw invalid_argument if the factor is 0
+     *  
     */
+    Graph operator/(int factor) const {
+        if (factor == 0) {
+            throw std::invalid_argument("Division by zero.");
+        }
+        Graph g = *this;
+        g.modifyEdgeWeights([factor](int weight) { return weight / factor; });
+        return g;
+    }
+
+    /**
+     * @brief /= operator with a scalar
+     * Will divide the current graph by a scalar.
+     * If A(u, v) / factor = 0, the edge will be removed. (iff A(u, v) = 0)
+     * @param factor the scalar (the divisor)
+     * @return a reference to the current graph after dividing it by a scalar
+     * @throw invalid_argument if the factor is 0
+    */
+    Graph& operator/=(int factor) {
+        *this = *this / factor;
+        return *this;
+    }
 
     // ~~~ Comparison operators ~~~
     /**
