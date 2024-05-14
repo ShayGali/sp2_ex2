@@ -118,6 +118,8 @@ void Graph::updateData() {
 }
 
 void Graph::modifyEdgeWeights(function<int(int)> func) {
+    this->isWeighted = false;
+    this->haveNegativeEdgeWeight = false;
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < adjMat[u].size(); v++) {
             if (adjMat[u][v] != NO_EDGE) {
@@ -126,12 +128,18 @@ void Graph::modifyEdgeWeights(function<int(int)> func) {
                     adjMat[u][v] = NO_EDGE;
                 } else {
                     adjMat[u][v] = res;
+
+                    // update data if needed
+                    if (res != 1) {
+                        this->isWeighted = true;
+                    }
+                    if (res < 0) {
+                        this->haveNegativeEdgeWeight = true;
+                    }
                 }
             }
         }
     }
-
-    updateData();
 }
 
 void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) {
@@ -140,29 +148,36 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
     }
 
     if (this->isDirected != other.isDirected) {
-        throw std::invalid_argument("The two graphs are not the same type.");
+        throw std::invalid_argument("The two graphs are not the same type (directed/undirected).");
     }
 
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
-            if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] == NO_EDGE) {
+            
+            if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] == NO_EDGE) { // if they are both NO_EDGE - the result edge is NO_EDGE
                 adjMat[u][v] = NO_EDGE;
-            } else if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] != NO_EDGE) {
+            } else if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] != NO_EDGE) { // if one of them is NO_EDGE - the result edge is the other one  
                 adjMat[u][v] = other.adjMat[u][v];
             } else if (adjMat[u][v] != NO_EDGE && other.adjMat[u][v] == NO_EDGE) {
                 adjMat[u][v] = adjMat[u][v];
-            } else {
+            } else { // if they are both not NO_EDGE - the result edge is the result of the operation
                 int res = func(adjMat[u][v], other.adjMat[u][v]);
-                if (res == 0 || res == NO_EDGE) {
+                if (res == 0 || res == NO_EDGE) { // if the result is 0 or NO_EDGE - the result edge is NO_EDGE
                     adjMat[u][v] = NO_EDGE;
-                } else {
+                } else { 
                     adjMat[u][v] = res;
+
+                    // update data if needed
+                    if (res != 1) {
+                        this->isWeighted = true;
+                    }
+                    if (res < 0) {
+                        this->haveNegativeEdgeWeight = true;
+                    }
                 }
             }
         }
     }
-
-    updateData();
 }
 
 // ~~~ helper functions ~~~
