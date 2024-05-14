@@ -17,13 +17,6 @@ using std::vector;
 
 namespace shayg {
 
-// ~~~ helper functions ~~~
-
-bool isSubMatrix(const vector<vector<int>>& subMatrix, const vector<vector<int>>& matrix);
-bool matrixEqual(const vector<vector<int>>& mat1, const vector<vector<int>>& mat2);
-
-// ~~~ done helper functions ~~~
-
 /**
  * @brief an abstract class that represents a graph as an adjacency matrix
  */
@@ -83,17 +76,16 @@ class Graph {
     void printAdjMat() const;
 
     /**
-     * @brief return deep copy of the adjacency matrix
+     * @brief return the adjacency matrix of the graph
      * @return vector<vector<int>> the adjacency matrix
      */
-    vector<vector<int>> getGraph() const;
-    vector<vector<int>>& getGraphRef() { return adjMat; }
-
+    const vector<vector<int>>& getGraph() const { return this->adjMat; }
+    vector<vector<int>>& getGraph() { return this->adjMat; }
     /**
      * @brief get the number of vertices and edges in the graph
      * @return size_t the number of vertices in the graph (|V|)
      */
-    size_t getNumVertices() const;
+    size_t getNumVertices() const { return adjMat.size(); }
 
     /**
      * @brief get the number of vertices and edges in the graph
@@ -105,28 +97,26 @@ class Graph {
      * @brief check if the graph is directed
      * @return true if the graph is directed, false otherwise
      */
-    bool isDirectedGraph() const;
+    bool isDirectedGraph() const { return isDirected; }
 
     /**
      * @brief check if the graph is weighted
      * @return true if the graph is weighted, false otherwise
      */
-    bool isWeightedGraph() const;
+    bool isWeightedGraph() const { return isWeighted; }
 
     /**
      * @brief check if the graph has negative edge weight
      * @return true if the graph has negative edge weight, false otherwise
      */
-    bool isHaveNegativeEdgeWeight() const;
+    bool isHaveNegativeEdgeWeight() const { return haveNegativeEdgeWeight; }
 
     // ~~~ Operators overloading ~~~
     /**
      * @brief Unary + operator
      * @return Graph a copy of the current graph
      */
-    Graph operator+() {
-        return *this;  // return a copy of the current graph
-    }
+    Graph operator+() { return *this; }
 
     /**
      * @brief Binary + operator.
@@ -255,34 +245,7 @@ class Graph {
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
      * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
-    Graph operator*(const Graph& other) const {
-        if (this->getNumVertices() != other.getNumVertices()) {
-            throw std::invalid_argument("The two graphs have different number of vertices.");
-        }
-        if (this->isDirected != other.isDirected) {
-            throw std::invalid_argument("The two graphs are not the same type (directed/undirected).");
-        }
-
-        Graph g = *this;
-
-        // do matrix multiplication on the adjacency matrices
-        // adjList[i][j] = sum(adjList[i][k] * adjList[k][j]) for all k
-        for (size_t i = 0; i < getNumVertices(); i++) {
-            for (size_t j = 0; j < adjMat[i].size(); j++) {
-                int sum = 0;
-                for (size_t k = 0; k < getNumVertices(); k++) {
-                    if (adjMat[i][k] != NO_EDGE && other.adjMat[k][j] != NO_EDGE)
-                        sum += adjMat[i][k] * other.adjMat[k][j];
-                }
-                if (sum != 0) {
-                    g.adjMat[i][j] = sum;
-                } else {
-                    g.adjMat[i][j] = NO_EDGE;
-                }
-            }
-        }
-        return g;
-    }
+    Graph operator*(const Graph& other) const;
 
     /**
      * @brief *= operator
@@ -325,14 +288,14 @@ class Graph {
     }
 
     /**
-     * @brief Binary / operator with a scalar   
+     * @brief Binary / operator with a scalar
      * Will return a new graph that is the current graph divided by a scalar.
      * If A(u, v) / factor = 0, the edge will be removed. (iff A(u, v) = 0)
      * @param factor the scalar (the divisor)
      * @return a new graph that is the current graph divided by a scalar
      * @throw invalid_argument if the factor is 0
-     *  
-    */
+     *
+     */
     Graph operator/(int factor) const {
         if (factor == 0) {
             throw std::invalid_argument("Division by zero.");
@@ -349,7 +312,7 @@ class Graph {
      * @param factor the scalar (the divisor)
      * @return a reference to the current graph after dividing it by a scalar
      * @throw invalid_argument if the factor is 0
-    */
+     */
     Graph& operator/=(int factor) {
         *this = *this / factor;
         return *this;
@@ -373,9 +336,7 @@ class Graph {
      * @param other the other graph
      * @return true if the current graph is not equal to the other graph, false otherwise
      */
-    bool operator!=(const Graph& other) const {
-        return !(*this == other);
-    }
+    bool operator!=(const Graph& other) const { return !(*this == other); }
 
     /**
      * @brief Overload the < operator
@@ -390,45 +351,7 @@ class Graph {
      * @param other the other graph
      * @return true if the current graph is less than the other graph, false otherwise
      */
-    bool operator<(const Graph& other) const {
-        // if they both empty graphs (no vertices and edges) return false
-        if (this->adjMat.empty() && other.adjMat.empty()) {
-            return false;
-        }
-
-        // if the current graph is empty and the other graph is not empty, return true (A is submatrix of B)
-        if (this->adjMat.empty()) {
-            return true;
-        }
-
-        // if the other graph is empty and the current graph is not empty, return false
-        if (other.adjMat.empty()) {
-            return false;
-        }
-
-        // if the two graphs have the same adjacency matrix, return false
-        if (matrixEqual(this->adjMat, other.adjMat)) {
-            return false;
-        }
-
-        // check if the adjacency matrix of the current graph is submatrix of the adjacency matrix of the other graph
-        if (isSubMatrix(this->adjMat, other.adjMat)) {
-            return true;
-        }
-        // A is not a submatrix of B - check the number of edges
-
-        // compare the number of edges
-        size_t edgeA = this->getNumEdges();
-        size_t edgeB = other.getNumEdges();
-
-        if (edgeA < edgeB) {
-            return true;
-        } else if (edgeA > edgeB) {
-            return false;
-        } else {  // if the number of edges is the same
-            return getNumVertices() < other.getNumVertices();
-        }
-    }
+    bool operator<(const Graph& other) const;
 
     /**
      * @brief Overload the > operator
@@ -436,27 +359,21 @@ class Graph {
      * @param other the other graph
      * @return true if the current graph is greater than the other graph, false otherwise
      */
-    bool operator>(const Graph& other) const {
-        return other < *this;
-    }
+    bool operator>(const Graph& other) const { return other < *this; }
 
     /**
      * @brief Overload the <= operator
      * @param other the other graph
      * @return true if the current graph is less than or equal to the other graph, false otherwise
      */
-    bool operator<=(const Graph& other) const {
-        return *this < other || *this == other;
-    }
+    bool operator<=(const Graph& other) const { return *this < other || *this == other; }
 
     /**
      * @brief Overload the >= operator
      * @param other the other graph
      * @return true if the current graph is greater than or equal to the other graph, false otherwise
      */
-    bool operator>=(const Graph& other) const {
-        return *this > other || *this == other;
-    }
+    bool operator>=(const Graph& other) const { return *this > other || *this == other; }
 
     /**
      * @brief Overload the << operator, will print the graph as an adjacency matrix

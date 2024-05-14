@@ -65,9 +65,9 @@ TEST_CASE("unary +") {
         g1.loadGraph(graph);
 
         Graph g2 = +g1;
-        CHECK(g1.getGraph() == g2.getGraph());          // check if the adjacency matrix have the same values
-        CHECK(&g1 != &g2);                              // check if the address is different
-        CHECK(&g1.getGraphRef() != &g2.getGraphRef());  // check if the address of the adjacency matrix is different
+        CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                        // check if the address is different
+        CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
     }
 
     SUBCASE("directed graph") {
@@ -84,7 +84,7 @@ TEST_CASE("unary +") {
         Graph g2 = +g1;
         CHECK(g1.getGraph() == g2.getGraph());          // check if the adjacency matrix have the same values
         CHECK(&g1 != &g2);                              // check if the address is different
-        CHECK(&g1.getGraphRef() != &g2.getGraphRef());  // check if the address of the adjacency matrix is different
+        CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
     }
 }
 
