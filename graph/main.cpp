@@ -18,18 +18,18 @@ int main() {
         // clang-format on
     };
     g1.loadGraph(graph1);
+    g1.printGraph();
+    // graph2 = {
+    //     // clang-format off
+    //         {NO_EDGE, -1,       NO_EDGE},
+    //         {-1,       NO_EDGE, NO_EDGE},
+    //         {NO_EDGE, NO_EDGE, NO_EDGE}
+    //     // clang-format on
+    // };
+    // g2.loadGraph(graph2);
+    // cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+    // g3 = g1 + g2;
 
-    graph2 = {
-        // clang-format off
-            {NO_EDGE, -1,       NO_EDGE},
-            {-1,       NO_EDGE, NO_EDGE},
-            {NO_EDGE, NO_EDGE, NO_EDGE}
-        // clang-format on
-    };
-    g2.loadGraph(graph2);
-    cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-    g3 = g1 + g2;
-
-    cout << g3 << endl;
+    // cout << g3 << endl;
     return 0;
 }

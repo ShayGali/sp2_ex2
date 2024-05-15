@@ -143,9 +143,9 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
             if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] == NO_EDGE) {  // if they are both NO_EDGE - the result edge is NO_EDGE
                 adjMat[u][v] = NO_EDGE;
             } else if (adjMat[u][v] == NO_EDGE && other.adjMat[u][v] != NO_EDGE) {  // if one of them is NO_EDGE - the result edge is the other one
-                adjMat[u][v] = other.adjMat[u][v];
+                adjMat[u][v] = func(0, other.adjMat[u][v]);
             } else if (adjMat[u][v] != NO_EDGE && other.adjMat[u][v] == NO_EDGE) {
-                adjMat[u][v] = adjMat[u][v];
+                adjMat[u][v] = func(adjMat[u][v], 0);
             } else {  // if they are both not NO_EDGE - the result edge is the result of the operation
                 int res = func(adjMat[u][v], other.adjMat[u][v]);
                 if (res == 0 || res == NO_EDGE) {  // if the result is 0 or NO_EDGE - the result edge is NO_EDGE
@@ -225,6 +225,9 @@ Graph Graph::operator*(const Graph& other) const {
     // adjList[i][j] = sum(adjList[i][k] * adjList[k][j]) for all k
     for (size_t i = 0; i < getNumVertices(); i++) {
         for (size_t j = 0; j < adjMat[i].size(); j++) {
+            if (adjMat[i][j] == NO_EDGE) {
+                continue;
+            }
             int sum = 0;
             for (size_t k = 0; k < getNumVertices(); k++) {
                 if (adjMat[i][k] != NO_EDGE && other.adjMat[k][j] != NO_EDGE)

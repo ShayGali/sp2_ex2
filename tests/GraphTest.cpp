@@ -246,8 +246,9 @@ TEST_CASE("Binary +") {
 }
 
 TEST_CASE("Binary -") {
+    function<int(int, int)> op = [](int a, int b) { return a - b; };
+
     SUBCASE("undirected graph") {
-        function<int(int, int)> op = [](int a, int b) { return a - b; };
         Graph g1(false), g2(false), g3(false);
         vector<vector<int>> graph1, graph2, graph3;
         bool matrixCheckResult;
@@ -310,6 +311,47 @@ TEST_CASE("Binary -") {
             CHECK(g3.isDirectedGraph() == false);           // check if the graph is directed
             CHECK(g3.getNumEdges() == 0);                   // check if the number of edges is correct
         }
+    }
+
+    SUBCASE("directed graph") {
+        Graph g1(true), g2(true), g3(true);
+        vector<vector<int>> graph1, graph2, graph3;
+        bool matrixCheckResult;
+
+        graph1 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {NO_EDGE, NO_EDGE, 2      },
+            {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        graph2 = {
+            // clang-format off
+            {NO_EDGE, NO_EDGE, 1      },
+            {1,       NO_EDGE, NO_EDGE},
+            {NO_EDGE, 1,       NO_EDGE}
+            // clang-format on
+        };
+
+        // expected result
+        graph3 = {
+            // clang-format off
+            {NO_EDGE, 1,       NO_EDGE},
+            {-1     , NO_EDGE, 2      },
+            {NO_EDGE, -1,      NO_EDGE}
+            // clang-format on
+        };
+
+        g1.loadGraph(graph1);
+        g2.loadGraph(graph2);
+
+        g3 = g1 - g2;
+        CHECK(g3.getGraph() == graph3);  // check if the adjacency matrix have the correct values
+        // graph3 = g3.getGraph();
+        // matrixCheckResult = checkMatrixes(graph1, graph2, graph3, op);
+        // CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+        CHECK(g3.getNumEdges() == 4);
     }
 }
 
