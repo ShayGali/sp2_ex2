@@ -395,11 +395,7 @@ class Graph {
      * @return std::ostream& the output stream
      *
      */
-    friend std::ostream& operator<<(std::ostream& os, const Graph& graph) {
-        graph.printGraph(os);
-        graph.printAdjMat(os);
-        return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, const Graph& graph);
 };
 
 }  // namespace shayg

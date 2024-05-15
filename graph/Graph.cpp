@@ -282,3 +282,9 @@ bool Graph::operator<(const Graph& other) const {
         return getNumVertices() < other.getNumVertices();
     }
 }
+
+std::ostream& shayg::operator<<(std::ostream& os, const Graph& graph) {  //~~~ the shayg:: is needed because the operator is defined in the shayg namespace ~~~//
+    graph.printGraph(os);
+    graph.printAdjMat(os);
+    return os;
+}

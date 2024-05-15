@@ -18,7 +18,10 @@ int main() {
         // clang-format on
     };
     g1.loadGraph(graph1);
-    g1.printGraph();
+
+    cout << g1 << endl;
+
+    // g1.printGraph();
     // graph2 = {
     //     // clang-format off
     //         {NO_EDGE, -1,       NO_EDGE},
