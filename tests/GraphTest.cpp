@@ -365,13 +365,57 @@ TEST_CASE("-=") {
     SUBCASE("directed graph") {}
 }
 
+TEST_CASE("prefix ++") {
+    SUBCASE("undirected graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+    SUBCASE("directed graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+}
+
+TEST_CASE("postfix ++") {
+    SUBCASE("undirected graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+    SUBCASE("directed graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+}
+
+TEST_CASE("prefix --") {
+    SUBCASE("undirected graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+    SUBCASE("directed graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+}
+
+TEST_CASE("postfix --") {
+    SUBCASE("undirected graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+    SUBCASE("directed graph") {
+        SUBCASE("simple case") {}
+        SUBCASE("remove edges") {}
+    }
+}
+
 TEST_CASE("*") {
     SUBCASE("Graph * Graph") {
         SUBCASE("undirected graph") {}
         SUBCASE("directed graph") {}
     }
 
-    SUBCASE("Graph * int") {
+    SUBCASE("(Graph * int) and (int * Graph)") {
         SUBCASE("undirected graph") {}
         SUBCASE("directed graph") {}
     }
@@ -390,7 +434,113 @@ TEST_CASE("*=") {
 }
 
 TEST_CASE("==") {
-    SUBCASE("undirected graph") {}
+    SUBCASE("undirected graph") {
+        SUBCASE("simple equal graphs") {
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK(g1 == g2);
+        }
+
+        SUBCASE("empty graphs") {
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK(g1 == g2);
+
+            graph = {};
+            graph2 = {};
+            g1.loadGraph(graph);
+            g2.loadGraph(graph2);
+
+            CHECK(g1 == g2);
+        }
+
+        SUBCASE("different adjacency matrixes, but still equal") {
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, -1      },
+                {1,       -1,       NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK(g1 == g2);
+        }
+
+        SUBCASE("different graphs") {
+            // the number of edges is different
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, 1      , NO_EDGE},
+                {1,       NO_EDGE, 1      },
+                {NO_EDGE, 1      , NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK_FALSE(g1 == g2);
+            CHECK(g1 != g2);
+        }
+    }
     SUBCASE("directed graph") {}
 }
 
@@ -400,7 +550,31 @@ TEST_CASE("!=") {
 }
 
 TEST_CASE("<") {
-    SUBCASE("undirected graph") {}
+    SUBCASE("undirected graph") {
+        SUBCASE("G1 in sub set (not equals) of G2)") {
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK_FALSE(g1 < g2);
+        }
+    }
     SUBCASE("directed graph") {}
 }
 

@@ -47,7 +47,7 @@ void Graph::printGraph(std::ostream& out) const {
 
 void Graph::printAdjMat(std::ostream& out) const {
     for (size_t i = 0; i < adjMat.size(); i++) {
-        out << i << ": ";
+        // out << i << ": ";
         for (size_t j = 0; j < adjMat[i].size(); j++) {
             if (adjMat[i][j] != NO_EDGE) {
                 out << adjMat[i][j] << " ";
@@ -104,8 +104,9 @@ void Graph::updateData() {
 void Graph::modifyEdgeWeights(function<int(int)> func) {
     this->isWeighted = false;
     this->haveNegativeEdgeWeight = false;
+
     for (size_t u = 0; u < getNumVertices(); u++) {
-        for (size_t v = 0; v < adjMat[u].size(); v++) {
+        for (size_t v = 0; v < getNumVertices(); v++) {
             if (adjMat[u][v] != NO_EDGE) {
                 int res = func(adjMat[u][v]);
                 if (res == 0) {
@@ -284,7 +285,7 @@ bool Graph::operator<(const Graph& other) const {
 }
 
 std::ostream& shayg::operator<<(std::ostream& os, const Graph& graph) {  //~~~ the shayg:: is needed because the operator is defined in the shayg namespace ~~~//
-    graph.printGraph(os);
+    // graph.printGraph(os);
     graph.printAdjMat(os);
     return os;
 }

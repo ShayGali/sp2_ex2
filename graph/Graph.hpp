@@ -200,7 +200,7 @@ class Graph {
     }
 
     /**
-     * @brief prefix ++ operator
+     * @brief prefix ++ operator (++Graph)
      * Will increment the weight of all edges by 1.
      * If the weight of an edge is NO_EDGE, it will remain NO_EDGE.
      * If the weight of an edge is -1, then the edge will be removed.
@@ -213,7 +213,7 @@ class Graph {
     }
 
     /**
-     * @brief postfix ++ operator
+     * @brief postfix ++ operator (Graph++)
      * Will increment the weight of all edges by 1.
      * If the weight of an edge is NO_EDGE, it will remain NO_EDGE.
      * If the weight of an edge is -1, then the edge will be removed.
@@ -275,7 +275,7 @@ class Graph {
     }
 
     /**
-     * @brief Binary * operator with a scalar
+     * @brief Binary * operator with a scalar (Graph * int)
      * Will return a new graph that is the current graph multiplied by a scalar.
      * If A(u, v) * factor = 0, the edge will be removed. (iff factor = 0 || A(u, v) = 0)
      *
@@ -286,6 +286,17 @@ class Graph {
         Graph g = *this;
         g.modifyEdgeWeights([factor](int weight) { return weight * factor; });
         return g;
+    }
+
+    /**
+     * @brief Binary * operator with a scalar (int * Graph)
+     * Will return a new graph that is the current graph multiplied by a scalar.
+     * If A(u, v) * factor = 0, the edge will be removed. (iff factor = 0 || A(u, v) = 0)
+     * @param factor the scalar
+     * @param g a new graph that is the current graph multiplied by a scalar
+     */
+    friend Graph operator*(int factor, const Graph& g) {
+        return g * factor;
     }
 
     /**
@@ -340,7 +351,7 @@ class Graph {
      */
     bool operator==(const Graph& other) const {
         // !(A < B) && !(B < A)) == !(A < B || B < A)
-        return !(*this < other || other < *this);
+        return !(*this < other) && !(other < *this);
     }
 
     /**
