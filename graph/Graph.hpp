@@ -26,6 +26,7 @@ class Graph {
     bool isDirected;
     bool isWeighted;
     bool haveNegativeEdgeWeight;
+    int numEdges;
 
     /**
      * @brief modify the weights of the edges in the graph using a function
@@ -51,12 +52,6 @@ class Graph {
     void updateData();
 
    public:
-    /**
-     * @brief Construct a new Graph object
-     * @param isDirected whether the graph is directed or not. Default is false.
-     */
-    Graph(bool isDirected = false);
-
     /**
      * @brief Load the graph from an adjacency matrix
      * @param adjMat the adjacency matrix

@@ -7,7 +7,7 @@ using namespace std;
 using namespace shayg;
 
 int main() {
-    Graph g1(false), g2(false);
+    Graph g1, g2;
     vector<vector<int>> graph = {
         // clang-format off
                 {NO_EDGE, 1,       1      },

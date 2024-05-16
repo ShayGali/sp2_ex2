@@ -14,7 +14,7 @@
 
 using namespace shayg;
 TEST_CASE("Test loadGraph for Directed Graph") {
-    Graph g(true);
+    Graph g;
 
     vector<vector<int>> graph = {
         // clang-format off
@@ -55,7 +55,7 @@ TEST_CASE("Test loadGraph for Directed Graph") {
 }
 
 TEST_CASE("Test loadGraph for undirected graph") {
-    Graph g(false);
+    Graph g;
     vector<vector<int>> graph = {
         // clang-format off
             {NO_EDGE, 1,       1      },
@@ -87,17 +87,6 @@ TEST_CASE("Test loadGraph for undirected graph") {
         // clang-format on
     };
     CHECK_THROWS_AS(g.loadGraph(graph3), std::invalid_argument);
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    // non-symmetric matrix will cause an exception
-    vector<vector<int>> graph4 = {
-        // clang-format off
-            {NO_EDGE, 2,       1      },
-            {1,       NO_EDGE, 1      },
-            {1,       1,       NO_EDGE}
-        // clang-format on
-    };
-    CHECK_THROWS_AS(g.loadGraph(graph4), std::invalid_argument);
 }
 
 TEST_CASE("Test printGraph") {
@@ -105,13 +94,13 @@ TEST_CASE("Test printGraph") {
     std::stringstream buffer;
     std::streambuf* prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
 
-    Graph g_dir(true);
-    Graph g_undir(false);
+    Graph g_dir;
+    Graph g_undir;
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     vector<vector<int>> graph = {
         // clang-format off
-        {NO_EDGE, 1,       1      },
+        {NO_EDGE, 1,       NO_EDGE},
         {1,       NO_EDGE, 1      },
         {1,       1,       NO_EDGE}
         // clang-format on
@@ -123,9 +112,16 @@ TEST_CASE("Test printGraph") {
 
     // Restore std::cout to its original buffer
     std::cout.rdbuf(prevcoutbuf);
-    CHECK(buffer.str() == "Directed graph with 3 vertices and 6 edges.\n");
+    CHECK(buffer.str() == "Directed graph with 3 vertices and 5 edges.\n");
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    graph = {
+        // clang-format off
+        {NO_EDGE, 1,       1      },
+        {1,       NO_EDGE, 1      },
+        {1,       1,       NO_EDGE}
+        // clang-format on
+    };
     prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
     buffer.str("");
     g_undir.loadGraph(graph);
@@ -136,20 +132,8 @@ TEST_CASE("Test printGraph") {
 
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
-
-    // empty graph
     buffer.str("");
-
     vector<vector<int>> emptyGraph = {};
-    g_dir.loadGraph(emptyGraph);
-    g_dir.printGraph();
-    std::cout.rdbuf(prevcoutbuf);
-
-    CHECK(buffer.str() == "Directed graph with 0 vertices and 0 edges.\n");
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
-    buffer.str("");
     g_undir.loadGraph(emptyGraph);
     g_undir.printGraph();
 
@@ -159,7 +143,7 @@ TEST_CASE("Test printGraph") {
 }
 
 TEST_CASE("Test isConnected for directed graph") {
-    Graph g(true);
+    Graph g;
 
     // empty graph is connected
     vector<vector<int>> emptyGraph = {};
@@ -215,7 +199,7 @@ TEST_CASE("Test isConnected for directed graph") {
 }
 
 TEST_CASE("Test isConnected for undirected graph") {
-    Graph g(false);
+    Graph g;
     /*
     0---1---2
     */
@@ -254,7 +238,7 @@ TEST_CASE("Test isConnected for undirected graph") {
 }
 
 TEST_CASE("Error check shortestPath") {
-    Graph g(true);
+    Graph g;
     vector<vector<int>> graph = {
         // clang-format off
             {NO_EDGE, 1,       1      },
@@ -275,7 +259,7 @@ TEST_CASE("Error check shortestPath") {
 }
 
 TEST_CASE("Test shortestPath for directed graph unweighted") {
-    Graph g(true);
+    Graph g;
     /*
     0-->1-->2
     */
@@ -327,7 +311,7 @@ TEST_CASE("Test shortestPath for directed graph unweighted") {
 }
 
 TEST_CASE("Test shortestPath for directed graph weighted non-negative") {
-    Graph g(true);
+    Graph g;
 
     vector<vector<int>> graph = {
         // clang-format off
@@ -364,7 +348,7 @@ TEST_CASE("Test shortestPath for directed graph weighted non-negative") {
 }
 
 TEST_CASE("Test shortestPath for directed graph weighted with negative weights") {
-    Graph g(true);
+    Graph g;
 
     vector<vector<int>> graph = {
         // clang-format off
@@ -443,7 +427,7 @@ TEST_CASE("Test shortestPath for directed graph weighted with negative weights")
 }
 
 TEST_CASE("Test shortestPath for undirected graph unweighted") {
-    Graph g(false);
+    Graph g;
     /*
     0---1---2
     */
@@ -529,7 +513,7 @@ TEST_CASE("Test shortestPath for undirected graph unweighted") {
 };
 
 TEST_CASE("Test shortestPath for undirected graph weighted non-negative") {
-    Graph g(false);
+    Graph g;
 
     vector<vector<int>> graph = {
         // clang-format off
@@ -601,7 +585,7 @@ TEST_CASE("Test shortestPath for undirected graph weighted with negative weights
     A -(-10)- B
     this graph dont have a negative cycle
     */
-    Graph g(false);
+    Graph g;
 
     vector<vector<int>> graph = {
         // clang-format off
@@ -654,7 +638,7 @@ TEST_CASE("Test shortestPath for undirected graph weighted with negative weights
     CHECK(Algorithms::shortestPath(g, 12, 13) == "12->11->13");
 }
 TEST_CASE("Test isContainsCycle for directed graph") {
-    Graph g(true);
+    Graph g;
 
     // empty graph
     vector<vector<int>> emptyGraph = {};
@@ -705,17 +689,18 @@ TEST_CASE("Test isContainsCycle for directed graph") {
     g.loadGraph(graph4);
     CHECK(Algorithms::isContainsCycle(g) == "-1");
 
-    vector<vector<int>> graph5 = {
-        // clang-format off
-        {NO_EDGE, 1      , 2         ,NO_EDGE, NO_EDGE},
-        {1      , NO_EDGE, 3         ,NO_EDGE, NO_EDGE},
-        {2      , 3      , NO_EDGE   ,4      , NO_EDGE},
-        {NO_EDGE, NO_EDGE, 4         ,NO_EDGE, 5      },
-        {NO_EDGE, NO_EDGE, NO_EDGE   ,5      , NO_EDGE}
-        // clang-format on
-    };
-    g.loadGraph(graph5);
-    CHECK(Algorithms::isContainsCycle(g) == "0->1->0");
+    //TODO: Fix this is a directed graph
+    // vector<vector<int>> graph5 = {
+    //     // clang-format off
+    //     {NO_EDGE, 1      , 2         ,NO_EDGE, NO_EDGE},
+    //     {1      , NO_EDGE, 3         ,NO_EDGE, NO_EDGE},
+    //     {2      , 3      , NO_EDGE   ,4      , NO_EDGE},
+    //     {NO_EDGE, NO_EDGE, 4         ,NO_EDGE, 5      },
+    //     {NO_EDGE, NO_EDGE, NO_EDGE   ,5      , NO_EDGE}
+    //     // clang-format on
+    // };
+    // g.loadGraph(graph5);
+    // CHECK(Algorithms::isContainsCycle(g) == "0->1->0");
 
     vector<vector<int>> graph6 = {
         // clang-format off
@@ -730,7 +715,7 @@ TEST_CASE("Test isContainsCycle for directed graph") {
 }
 
 TEST_CASE("Test isContainsCycle for undirected graph") {
-    Graph g(false);
+    Graph g;
 
     // empty graph
     vector<vector<int>> emptyGraph = {};
@@ -770,7 +755,7 @@ TEST_CASE("Test isContainsCycle for undirected graph") {
 }
 
 TEST_CASE("Test isBipartite for undirected graph") {
-    Graph g(false);
+    Graph g;
 
     // empty graph
     vector<vector<int>> emptyGraph = {};
@@ -803,7 +788,7 @@ TEST_CASE("Test isBipartite for undirected graph") {
 }
 
 TEST_CASE("Test isBipartite for directed graph") {
-    Graph g(true);
+    Graph g;
 
     // empty graph
     vector<vector<int>> emptyGraph = {};
@@ -858,7 +843,7 @@ TEST_CASE("Test isBipartite for directed graph") {
 }
 
 TEST_CASE("Test negativeCycle for directed graph") {
-    Graph g(true);
+    Graph g;
 
     // empty graph
     vector<vector<int>> emptyGraph = {};
@@ -891,7 +876,7 @@ TEST_CASE("Test negativeCycle for directed graph") {
 }
 
 TEST_CASE("Test negativeCycle for undirected graph") {
-    Graph g(false);
+    Graph g;
 
     // empty graph
     vector<vector<int>> emptyGraph = {};

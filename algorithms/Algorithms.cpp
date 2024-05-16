@@ -290,7 +290,7 @@ string Algorithms::negativeCycle(const Graph& g) {
     size_t n = g.getGraph().size();
 
     // create a new graph with a new vertex
-    Graph newGraph = Graph(true);  // we will build a directed graph, and save if g was directed or not
+    Graph newGraph;  // we will build a directed graph, and save if g was directed or not
     bool isDirected = g.isDirectedGraph();
 
     vector<vector<int>> newGraphMat(n + 1, vector<int>(n + 1, INF));

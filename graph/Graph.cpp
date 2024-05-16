@@ -11,9 +11,6 @@ using namespace shayg;
 
 using std::invalid_argument;
 
-Graph::Graph(bool isDirected) {
-    this->isDirected = isDirected;
-}
 
 void Graph::loadGraph(const vector<vector<int>>& adjMat) {
     this->adjMat = adjMat;
@@ -77,12 +74,17 @@ size_t Graph::getNumEdges() const {
 }
 
 void Graph::updateData() {
+    this->isDirected = false;
     this->isWeighted = false;
     this->haveNegativeEdgeWeight = false;
+    this->numEdges = 0;
 
     for (size_t i = 0; i < adjMat.size(); i++) {
         for (size_t j = 0; j < adjMat[i].size(); j++) {
             if (adjMat[i][j] != NO_EDGE) {
+
+                this->numEdges++;
+
                 if (adjMat[i][j] != 1) {
                     this->isWeighted = true;
                 }
@@ -91,11 +93,15 @@ void Graph::updateData() {
                     this->haveNegativeEdgeWeight = true;
                 }
 
-                if (!this->isDirected && adjMat[i][j] != adjMat[j][i]) {
-                    throw invalid_argument("Invalid graph: The graph is not symmetric.(mat[" + std::to_string(i) + "][" + std::to_string(j) + "] = " + std::to_string(adjMat[i][j]) + " and mat[" + std::to_string(j) + "][" + std::to_string(i) + "] = " + std::to_string(adjMat[j][i]) + ")");
+                if (adjMat[i][j] != adjMat[j][i]) {
+                    this->isDirected = true;
                 }
             }
         }
+    }
+
+    if (this->isDirected) {
+        this->numEdges /= 2;
     }
 }
 

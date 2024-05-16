@@ -54,7 +54,7 @@ bool checkMatrixes(const vector<vector<int>>& m1, const vector<vector<int>>& m2,
 
 TEST_CASE("unary +") {
     SUBCASE("undirected graph") {
-        Graph g1(false);
+        Graph g1;
         vector<vector<int>> graph = {
             // clang-format off
             {NO_EDGE, 1,       1      },
@@ -71,7 +71,7 @@ TEST_CASE("unary +") {
     }
 
     SUBCASE("directed graph") {
-        Graph g1(true);
+        Graph g1;
         vector<vector<int>> graph = {
             // clang-format off
             {NO_EDGE, 1,       1      },
@@ -90,7 +90,7 @@ TEST_CASE("unary +") {
 
 TEST_CASE("unary -") {
     SUBCASE("undirected graph") {
-        Graph g1(false);
+        Graph g1;
         vector<vector<int>> graph = {
             // clang-format off
             {NO_EDGE, 1,       1      },
@@ -121,7 +121,7 @@ TEST_CASE("unary -") {
 TEST_CASE("Binary +") {
     function<int(int, int)> op = [](int a, int b) { return a + b; };
     SUBCASE("undirected graph") {
-        Graph g1(false), g2(false), g3(false);
+        Graph g1, g2, g3;
         vector<vector<int>> graph1, graph2, graph3;
         bool matrixCheckResult;
         SUBCASE("Test case 1 - add two graphs") {
@@ -215,7 +215,7 @@ TEST_CASE("Binary +") {
     }
 
     SUBCASE("directed graph") {
-        Graph g1(true), g2(true), g3(true);
+        Graph g1, g2, g3;
         vector<vector<int>> graph1, graph2, graph3;
         bool matrixCheckResult;
         graph1 = {
@@ -249,7 +249,7 @@ TEST_CASE("Binary -") {
     function<int(int, int)> op = [](int a, int b) { return a - b; };
 
     SUBCASE("undirected graph") {
-        Graph g1(false), g2(false), g3(false);
+        Graph g1, g2, g3;
         vector<vector<int>> graph1, graph2, graph3;
         bool matrixCheckResult;
 
@@ -314,7 +314,7 @@ TEST_CASE("Binary -") {
     }
 
     SUBCASE("directed graph") {
-        Graph g1(true), g2(true), g3(true);
+        Graph g1, g2, g3;
         vector<vector<int>> graph1, graph2, graph3;
         bool matrixCheckResult;
 
@@ -436,7 +436,7 @@ TEST_CASE("*=") {
 TEST_CASE("==") {
     SUBCASE("undirected graph") {
         SUBCASE("simple equal graphs") {
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, 1,       1      },
@@ -460,7 +460,7 @@ TEST_CASE("==") {
         }
 
         SUBCASE("empty graphs") {
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, NO_EDGE, NO_EDGE},
@@ -491,7 +491,7 @@ TEST_CASE("==") {
         }
 
         SUBCASE("different adjacency matrixes, but still equal") {
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, 1,       1      },
@@ -516,7 +516,7 @@ TEST_CASE("==") {
 
         SUBCASE("different graphs") {
             // the number of edges is different
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, 1,       1      },
@@ -552,7 +552,7 @@ TEST_CASE("!=") {
 TEST_CASE("<") {
     SUBCASE("undirected graph") {
         SUBCASE("G1 in subset of G2") {
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, 1,       NO_EDGE },
@@ -576,7 +576,7 @@ TEST_CASE("<") {
         }
 
         SUBCASE("G1 equals G2") {
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, 1,       1      },
@@ -601,7 +601,7 @@ TEST_CASE("<") {
         }
 
         SUBCASE("G1 not in subset of G2 and G2 have more edges") {
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, NO_EDGE, 1      },
@@ -626,7 +626,7 @@ TEST_CASE("<") {
         }
 
         SUBCASE("G1 not in subset of G2 and |E(G1)| = |E(G2)| and |V(G1)|<|V(G2)|") {
-            Graph g1(false), g2(false);
+            Graph g1, g2;
             vector<vector<int>> graph = {
                 // clang-format off
                 {NO_EDGE, NO_EDGE, 1      },
