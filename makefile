@@ -22,7 +22,7 @@ $(PROG): $(PROG).o $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 test: 
-	make -C tests test
+	make -C tests run
 
 valgrind: $(PROG)
 	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./$< 2>&1 | { egrep "lost| at " || true; }

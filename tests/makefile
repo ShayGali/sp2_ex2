@@ -15,9 +15,12 @@ TEST_OBJECTS=$(subst .cpp,.o,$(TEST_SOURCES))
 
 .PHONY: clean test graph algorithms valgrind tidy
 
+run: test
+	./test
+
 test: $(TEST_OBJECTS) graph algorithms
 	$(CXX) $(CXXFLAGS) $(TEST_OBJECTS) $(OBJECTS) -o test
-	./test
+
 
 valgrind: test
 	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./test 2>&1 | { egrep "lost| at " || true; }
