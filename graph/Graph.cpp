@@ -131,9 +131,6 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
         throw std::invalid_argument("The two graphs have different number of vertices.");
     }
 
-    if (this->isDirected != other.isDirected) {
-        throw std::invalid_argument("The two graphs are not the same type (directed/undirected).");
-    }
 
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
@@ -204,9 +201,6 @@ bool matrixEqual(const vector<vector<int>>& mat1, const vector<vector<int>>& mat
 Graph Graph::operator*(const Graph& other) const {
     if (this->getNumVertices() != other.getNumVertices()) {
         throw std::invalid_argument("The two graphs have different number of vertices.");
-    }
-    if (this->isDirected != other.isDirected) {
-        throw std::invalid_argument("The two graphs are not the same type (directed/undirected).");
     }
 
     Graph g = *this;

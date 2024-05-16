@@ -41,7 +41,6 @@ class Graph {
      * @param other the other graph that will be used to modify the weights of the edges
      * @param func the function that will be applied to the weights of the edges, will take the current weight and the weight of the other graph as arguments and change the current weight with the result of the function.
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
-     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
     void modifyEdgeWeights(const Graph& other, function<int(int, int)> func);
 
@@ -133,7 +132,6 @@ class Graph {
      * @param other the other graph
      * @return Graph the sum of the two graphs
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
-     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
     Graph operator+(const Graph& other) {
         Graph newGraph = *this;  // copy the current graph
@@ -147,7 +145,6 @@ class Graph {
      * @param other the other graph
      * @return the current graph after adding the other graph
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
-     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
     Graph& operator+=(const Graph& other) {
         *this = *this + other;  // call the + operator and assign the result to the current graph
@@ -172,7 +169,6 @@ class Graph {
      * @param other the other graph
      * @return A new graph that is the difference of the two graphs
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
-     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
     Graph operator-(const Graph& other) {
         Graph newGraph = *this;  // copy the current graph
@@ -187,7 +183,6 @@ class Graph {
      * @param other the other graph
      * @return a reference to the current graph after subtracting the other graph
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
-     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
     Graph& operator-=(const Graph& other) {
         *this = *this - other;  // call the - operator and assign the result to the current graph
@@ -251,7 +246,6 @@ class Graph {
      * @param other the other graph
      * @return a new graph that is the matrix multiplication of the two graphs
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
-     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
     Graph operator*(const Graph& other) const;
 
@@ -262,7 +256,6 @@ class Graph {
      * @param other the other graph
      * @return a reference to the current graph after multiplying it by the other graph
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
-     * @throw invalid_argument if the two graphs are not the same type (directed/undirected)
      */
     Graph& operator*=(const Graph& other) {
         *this = *this * other;  // call the * operator and assign the result to the current graph
