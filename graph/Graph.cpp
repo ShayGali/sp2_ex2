@@ -102,8 +102,6 @@ void Graph::updateData() {
 // ~~~ helper functions for the operators ~~~
 
 void Graph::modifyEdgeWeights(function<int(int)> func) {
-    this->isWeighted = false;
-    this->haveNegativeEdgeWeight = false;
 
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
@@ -114,17 +112,12 @@ void Graph::modifyEdgeWeights(function<int(int)> func) {
                 } else {
                     adjMat[u][v] = res;
 
-                    // update data if needed
-                    if (res != 1) {
-                        this->isWeighted = true;
-                    }
-                    if (res < 0) {
-                        this->haveNegativeEdgeWeight = true;
-                    }
                 }
             }
         }
     }
+
+    updateData();
 }
 
 void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) {
@@ -135,9 +128,6 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
     if (this->isDirected != other.isDirected) {
         throw std::invalid_argument("The two graphs are not the same type (directed/undirected).");
     }
-
-    this->isWeighted = false;
-    this->haveNegativeEdgeWeight = false;
 
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
@@ -155,17 +145,10 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
                     adjMat[u][v] = res;
                 }
             }
-
-            if (adjMat[u][v] != NO_EDGE) {
-                if (adjMat[u][v] != 1) {
-                    this->isWeighted = true;
-                }
-                if (adjMat[u][v] < 0) {
-                    this->haveNegativeEdgeWeight = true;
-                }
-            }
         }
     }
+
+    updateData();
 }
 
 bool isSubMatrix(const vector<vector<int>>& subMatrix, const vector<vector<int>>& matrix) {

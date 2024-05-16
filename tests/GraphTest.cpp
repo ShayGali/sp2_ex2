@@ -551,7 +551,31 @@ TEST_CASE("!=") {
 
 TEST_CASE("<") {
     SUBCASE("undirected graph") {
-        SUBCASE("G1 in sub set (not equals) of G2)") {
+        SUBCASE("G1 in subset of G2") {
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, 1,       NO_EDGE },
+                {1,       NO_EDGE, 1      },
+                {NO_EDGE, 1,       NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK(g1 < g2);
+        }
+
+        SUBCASE("G1 equals G2") {
             Graph g1(false), g2(false);
             vector<vector<int>> graph = {
                 // clang-format off
@@ -573,6 +597,58 @@ TEST_CASE("<") {
             g2.loadGraph(graph2);
 
             CHECK_FALSE(g1 < g2);
+            CHECK_FALSE(g2 < g1);
+        }
+
+        SUBCASE("G1 not in subset of G2 and G2 have more edges") {
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, NO_EDGE, 1      },
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {1,       NO_EDGE, NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, 1      , NO_EDGE},
+                {1,       NO_EDGE, 1      },
+                {NO_EDGE, 1      , NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK(g1 < g2);
+            CHECK_FALSE(g2 < g1);
+        }
+
+        SUBCASE("G1 not in subset of G2 and |E(G1)| = |E(G2)| and |V(G1)|<|V(G2)|") {
+            Graph g1(false), g2(false);
+            vector<vector<int>> graph = {
+                // clang-format off
+                {NO_EDGE, NO_EDGE, 1      },
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {1,       NO_EDGE, NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            vector<vector<int>> graph2 = {
+                // clang-format off
+                {NO_EDGE, 1      , NO_EDGE, 1      },
+                {1,       NO_EDGE, 1      , 1      },
+                {NO_EDGE, 1      , NO_EDGE, 1      },
+                {1,       1      , 1      , NO_EDGE}
+                // clang-format on
+            };
+
+            g2.loadGraph(graph2);
+
+            CHECK(g1 < g2);
+            CHECK_FALSE(g2 < g1);
         }
     }
     SUBCASE("directed graph") {}
