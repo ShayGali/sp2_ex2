@@ -451,7 +451,7 @@ pair<vector<int>, vector<int>> bellmanFord(const Graph& g, size_t src, bool isDi
                     }
 
                     // relax the edge (u, v)
-                    if (distances[u] == INF || g.getGraph()[u][v] == INF) {
+                    if (distances[u] == INF || g.getGraph()[u][v] == NO_EDGE) {
                         continue;
                     }
 
