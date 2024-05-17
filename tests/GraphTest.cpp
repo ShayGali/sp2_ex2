@@ -26,13 +26,13 @@ bool checkMatrixes(const vector<vector<int>>& m1, const vector<vector<int>>& m2,
                     return false;
                 }
             } else if (m1[i][j] == NO_EDGE && m2[i][j] != NO_EDGE) {  // if one of them is NO_EDGE - the expected value should be the other one
-                if (expected[i][j] != m2[i][j]) {
-                    cout << "m2 expected[" << i << "][" << j << "] = " << expected[i][j] << " m1[" << i << "][" << j << "] = " << m1[i][j] << " m2[" << i << "][" << j << "] = " << m2[i][j] << "\n";
+                if (expected[i][j] != op(0, m2[i][j])) {
+                    cout << "the result should be m2[" << i << "][" << j << "] = " << m2[i][j] << " but the result is " << expected[i][j] << "\n";
                     return false;
                 }
             } else if (m1[i][j] != NO_EDGE && m2[i][j] == NO_EDGE) {
-                if (expected[i][j] != m1[i][j]) {
-                    cout << "m1 expected[" << i << "][" << j << "] = " << expected[i][j] << " m1[" << i << "][" << j << "] = " << m1[i][j] << " m2[" << i << "][" << j << "] = " << m2[i][j] << "\n";
+                if (expected[i][j] != op(m1[i][j],0)) {
+                    cout << "the result should be m1[" << i << "][" << j << "] = " << m1[i][j] << " but the result is " << expected[i][j] << "\n";
                     return false;
                 }
             } else if (m1[i][j] != NO_EDGE && m2[i][j] != NO_EDGE) {  // if they are both not NO_EDGE - the expected value should be the result of the operation
@@ -68,6 +68,7 @@ TEST_CASE("unary +") {
         CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
         CHECK(&g1 != &g2);                        // check if the address is different
         CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
+        CHECK(g2.isDirectedGraph() == false);     // check if the graph is directed
     }
 
     SUBCASE("directed graph") {
@@ -102,15 +103,14 @@ TEST_CASE("unary -") {
         g1.loadGraph(graph);
 
         Graph g2 = -g1;
-        for (size_t i = 0; i < graph.size(); i++) {
-            for (size_t j = 0; j < graph[i].size(); j++) {
-                if (graph[i][j] == NO_EDGE) {
-                    CHECK(g2.getGraph()[i][j] == NO_EDGE);  // check if the edge is NO_EDGE
-                } else {
-                    CHECK(g2.getGraph()[i][j] == -graph[i][j]);  // check if the edge is the negative of the original edge
-                }
-            }
-        }
+        vector<vector<int>> expected = {
+            // clang-format off
+            {NO_EDGE, -1,       -1      },
+            {-1,       NO_EDGE, -1      },
+            {-1,       -1,       NO_EDGE}
+            // clang-format on
+        };
+        CHECK(g2.getGraph() == expected);              // check if the adjacency matrix have the correct values
         CHECK(&g1 != &g2);                             // check if the address is different
         CHECK(g2.isHaveNegativeEdgeWeight() == true);  // check if the graph have negative edge weight
         CHECK(g2.isWeightedGraph() == true);           // check if the graph is weighted
@@ -145,11 +145,11 @@ TEST_CASE("Binary +") {
             g2.loadGraph(graph2);
 
             g3 = g1 + g2;
-        //     graph3 = g3.getGraph();
-        //     matrixCheckResult = checkMatrixes(graph1, graph2, graph3, op);
-        //     CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
-        //     CHECK(&g1 != &g3);                 // check if the address is different
-        //     CHECK(&g2 != &g3);                 // check if the address is different
+            graph3 = g3.getGraph();
+            matrixCheckResult = checkMatrixes(graph1, graph2, graph3, op);
+            CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+            CHECK(&g1 != &g3);                 // check if the address is different
+            CHECK(&g2 != &g3);                 // check if the address is different
         }
         //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // Test case 2 - remove a edges from the graph
@@ -195,8 +195,8 @@ TEST_CASE("Binary +") {
 
             graph2 = {
                 // clang-format off
-            {NO_EDGE, -1,       NO_EDGE},
-            {-1,       NO_EDGE, NO_EDGE},
+            {NO_EDGE, -1,      NO_EDGE},
+            {-1,      NO_EDGE, NO_EDGE},
             {NO_EDGE, NO_EDGE, NO_EDGE}
                 // clang-format on
             };
@@ -242,6 +242,37 @@ TEST_CASE("Binary +") {
         matrixCheckResult = checkMatrixes(graph1, graph2, graph3, op);
         CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
         CHECK(g3.getNumEdges() == 5);
+    }
+
+    SUBCASE("Dir + Undir") {
+        Graph g1, g2, g3;
+        vector<vector<int>> graph1, graph2, graph3;
+        bool matrixCheckResult;
+        graph1 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {NO_EDGE, NO_EDGE, 2      },
+            {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        graph2 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+
+        g1.loadGraph(graph1);
+        g2.loadGraph(graph2);
+
+        g3 = g1 + g2;
+        graph3 = g3.getGraph();
+        matrixCheckResult = checkMatrixes(graph1, graph2, graph3, op);
+        CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+        CHECK(g3.getNumEdges() == 6);
+        CHECK(g3.isDirectedGraph() == true);
     }
 }
 
@@ -356,13 +387,260 @@ TEST_CASE("Binary -") {
 }
 
 TEST_CASE("+=") {
-    SUBCASE("undirected graph") {}
-    SUBCASE("directed graph") {}
+    SUBCASE("undirected graph") {
+        Graph g1, g2;
+        vector<vector<int>> graph1, graph2;
+        bool matrixCheckResult;
+
+        SUBCASE("Test case 1 - simple case") {
+            graph1 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            graph2 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g1.loadGraph(graph1);
+            g2.loadGraph(graph2);
+
+            g1 += g2;
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+            CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+            CHECK(g1.isDirectedGraph() == false);
+            CHECK(g1.getNumEdges() == 3);
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Test case 2 - remove a edges from the graph
+        SUBCASE("Test case 2 - remove a edges from the graph") {
+            graph1 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph1);
+
+            graph2 = {
+                // clang-format off
+            {NO_EDGE, 1,       -1     },
+            {1,       NO_EDGE, 1      },
+            {-1,       1,      NO_EDGE}
+                // clang-format on
+            };
+            g2.loadGraph(graph2);
+
+            g1 += g2;
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+
+            CHECK(matrixCheckResult == true);               // check if the adjacency matrix have the correct values
+            CHECK(g1.isHaveNegativeEdgeWeight() == false);  // check if the graph have negative edge weight
+            CHECK(g1.isWeightedGraph() == true);            // check if the graph is weighted
+            CHECK(g1.isDirectedGraph() == false);           // check if the graph is directed
+            CHECK(g1.getNumEdges() == 2);                   // check if the number of edges is correct
+        }
+        SUBCASE("directed graph") {
+            Graph g1, g2;
+            vector<vector<int>> graph1, graph2;
+            bool matrixCheckResult;
+
+            graph1 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {NO_EDGE, NO_EDGE, 2      },
+            {NO_EDGE, NO_EDGE, NO_EDGE}
+                // clang-format on
+            };
+
+            graph2 = {
+                // clang-format off
+            {NO_EDGE, NO_EDGE, 1      },
+            {1,       NO_EDGE, NO_EDGE},
+            {NO_EDGE, 1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g1.loadGraph(graph1);
+            g2.loadGraph(graph2);
+
+            g1 += g2;
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+            CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+            CHECK(g1.getNumEdges() == 5);
+
+            SUBCASE("udir+udir = dir") {
+                Graph g1, g2;
+                vector<vector<int>> graph1, graph2;
+                bool matrixCheckResult;
+
+                graph1 = {
+                    // clang-format off
+                {NO_EDGE, 1,       1      },
+                {NO_EDGE, NO_EDGE, 1      },
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+                    // clang-format on
+                };
+
+                graph2 = {
+                    // clang-format off
+                    {NO_EDGE, NO_EDGE, NO_EDGE},
+                    {1,       NO_EDGE, NO_EDGE},
+                    {1,       1,       NO_EDGE}
+                    // clang-format on
+                };
+
+                g1.loadGraph(graph1);
+                g2.loadGraph(graph2);
+
+                g1 += g2;
+
+                matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+                CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+                CHECK(g1.getNumEdges() == 3);
+                CHECK(g1.isDirectedGraph() == false);
+                CHECK(g1.isWeightedGraph() == false);
+            }
+        }
+
+        SUBCASE("Dir + Undir") {
+            Graph g1, g2;
+            vector<vector<int>> graph1, graph2;
+            bool matrixCheckResult;
+
+            graph1 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {NO_EDGE, NO_EDGE, 2      },
+            {NO_EDGE, NO_EDGE, NO_EDGE}
+                // clang-format on
+            };
+
+            graph2 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g1.loadGraph(graph1);
+            g2.loadGraph(graph2);
+
+            g1 += g2;
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+            CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+            CHECK(g1.getNumEdges() == 6);
+            CHECK(g1.isDirectedGraph() == true);
+        }
+    }
 }
 
 TEST_CASE("-=") {
-    SUBCASE("undirected graph") {}
-    SUBCASE("directed graph") {}
+    SUBCASE("undirected graph") {
+        Graph g1, g2;
+        vector<vector<int>> graph1, graph2;
+        bool matrixCheckResult;
+
+        SUBCASE("Test case 1 - simple case") {
+            graph1 = {
+                // clang-format off
+            {NO_EDGE, 2,       2      },
+            {2,       NO_EDGE, 2      },
+            {2,       2,       NO_EDGE}
+                // clang-format on
+            };
+
+            graph2 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            g1.loadGraph(graph1);
+            g2.loadGraph(graph2);
+
+            g1 -= g2;
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a - b; });
+            CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
+            CHECK(g1.isDirectedGraph() == false);
+            CHECK(g1.getNumEdges() == 3);
+            CHECK(g1.isHaveNegativeEdgeWeight() == false);
+            CHECK(g1.isWeightedGraph() == false);
+        }
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // Test case 2 - remove a edges from the graph
+        SUBCASE("Test case 2 - remove a edges from the graph") {
+            graph1 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph1);
+
+            graph2 = {
+                // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+            g2.loadGraph(graph2);
+
+            g1 -= g2;
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a - b; });
+
+            CHECK(matrixCheckResult == true);               // check if the adjacency matrix have the correct values
+            CHECK(g1.isHaveNegativeEdgeWeight() == false);  // check if the graph have negative edge
+            CHECK(g1.isWeightedGraph() == false);           // check if the graph is weighted
+            CHECK(g1.isDirectedGraph() == false);           // check if the graph is directed
+            CHECK(g1.getNumEdges() == 0);                   // check if the number of edges is correct
+        }
+    }
+    SUBCASE("directed graph") {
+        Graph g1, g2;
+        vector<vector<int>> graph1, graph2;
+        bool matrixCheckResult;
+
+        graph1 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {NO_EDGE, NO_EDGE, 2      },
+            {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        graph2 = {
+            // clang-format off
+            {NO_EDGE, NO_EDGE, 1      },
+            {1,       NO_EDGE, NO_EDGE},
+            {NO_EDGE, 1,       NO_EDGE}
+            // clang-format on
+        };
+
+        g1.loadGraph(graph1);
+        g2.loadGraph(graph2);
+
+        g1 -= g2;
+
+
+        matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a - b; });
+        CHECK(matrixCheckResult);  // check if the adjacency matrix have the correct values
+        CHECK(g1.getNumEdges() == 4);
+        CHECK(g1.isHaveNegativeEdgeWeight() == true);
+    }
 }
 
 TEST_CASE("prefix ++") {
