@@ -31,7 +31,7 @@ bool checkMatrixes(const vector<vector<int>>& m1, const vector<vector<int>>& m2,
                     return false;
                 }
             } else if (m1[i][j] != NO_EDGE && m2[i][j] == NO_EDGE) {
-                if (expected[i][j] != op(m1[i][j],0)) {
+                if (expected[i][j] != op(m1[i][j], 0)) {
                     cout << "the result should be m1[" << i << "][" << j << "] = " << m1[i][j] << " but the result is " << expected[i][j] << "\n";
                     return false;
                 }
@@ -635,7 +635,6 @@ TEST_CASE("-=") {
 
         g1 -= g2;
 
-
         matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a - b; });
         CHECK(matrixCheckResult);  // check if the adjacency matrix have the correct values
         CHECK(g1.getNumEdges() == 4);
@@ -644,47 +643,269 @@ TEST_CASE("-=") {
 }
 
 TEST_CASE("prefix ++") {
-    SUBCASE("undirected graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
+    SUBCASE("simple case") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = ++g1;
+
+        vector<vector<int>> expected = {
+            // clang-format off
+                {NO_EDGE, 2,       2      },
+                {2,       NO_EDGE, 2      },
+                {2,       2,       NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected);         // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                        // check if the address is different
+        CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
+        CHECK(g2.isDirectedGraph() == false);     // check if the graph is directed
     }
-    SUBCASE("directed graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
+    SUBCASE("remove edges") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, 1,       -1     },
+                {1,       NO_EDGE, 1      },
+                {-1,       1,      NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = ++g1;
+
+        vector<vector<int>> expected = {
+            // clang-format off
+                {NO_EDGE, 2,       0      },
+                {2,       NO_EDGE, 2      },
+                {0,       2,       NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected);         // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                        // check if the address is different
+        CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
+        CHECK(g2.isDirectedGraph() == false);     // check if the graph is directed
+        CHECK(g2.getNumEdges() == 2);             // check if the number of edges is correct
+    }
+
+    SUBCASE("empty graph") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = ++g1;
+
+        vector<vector<int>> expected = {
+            // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected);         // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                        // check if the address is different
+        CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
+        CHECK(g2.isDirectedGraph() == false);     // check if the graph is directed
     }
 }
 
 TEST_CASE("postfix ++") {
-    SUBCASE("undirected graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
+    SUBCASE("simple case") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = g1++;
+        vector<vector<int>> expected_g1 = {
+            // clang-format off
+                {NO_EDGE, 2,       2      },
+                {2,       NO_EDGE, 2      },
+                {2,       2,       NO_EDGE}
+            // clang-format on
+        };
+
+        vector<vector<int>> expected_g2 = {
+            // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == expected_g1);  // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected_g2);  // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                    // check if the address is different
     }
-    SUBCASE("directed graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
+    SUBCASE("remove edges") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, 1,       -1     },
+                {1,       NO_EDGE, 1      },
+                {-1,       1,      NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = g1++;
+
+        vector<vector<int>> expected_g1 = {
+            // clang-format off
+                {NO_EDGE, 2,       0      },
+                {2,       NO_EDGE, 2      },
+                {0,       2,       NO_EDGE}
+            // clang-format on
+        };
+
+        vector<vector<int>> expected_g2 = {
+            // clang-format off
+                {NO_EDGE, 1,       -1     },
+                {1,       NO_EDGE, 1      },
+                {-1,       1,      NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == expected_g1);  // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected_g2);  // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                    // check if the address is different
+        CHECK(g1.getNumEdges() == 2);         // check if the number of edges is correct
+    }
+
+    SUBCASE("empty graph") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = g1++;
+
+        vector<vector<int>> expected = {
+            // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == expected);  // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected);  // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                 // check if the address is different
     }
 }
 
 TEST_CASE("prefix --") {
-    SUBCASE("undirected graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
+    SUBCASE("simple case") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, NO_EDGE, 2      },
+                {NO_EDGE, NO_EDGE, 1      },
+                {3,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = --g1;
+
+        vector<vector<int>> expected = {
+            // clang-format off
+                {NO_EDGE, NO_EDGE, 1      },
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {2,       NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected);         // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                        // check if the address is different
+        CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
+        CHECK(g2.isDirectedGraph() == true);      // check if the graph is directed
+        CHECK(g2.getNumEdges() == 2);             // check if the number of edges is correct
     }
-    SUBCASE("directed graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
+    SUBCASE("remove edges") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        Graph g2 = --g1;
+
+        vector<vector<int>> expected = {
+            // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == g2.getGraph());    // check if the adjacency matrix have the same values
+        CHECK(g2.getGraph() == expected);         // check if the adjacency matrix have the same values
+        CHECK(&g1 != &g2);                        // check if the address is different
+        CHECK(&g1.getGraph() != &g2.getGraph());  // check if the address of the adjacency matrix is different
+        CHECK(g2.isDirectedGraph() == false);     // check if the graph is directed
+        CHECK(g2.getNumEdges() == 0);             // check if the number of edges is correct
     }
 }
 
 TEST_CASE("postfix --") {
-    SUBCASE("undirected graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
-    }
-    SUBCASE("directed graph") {
-        SUBCASE("simple case") {}
-        SUBCASE("remove edges") {}
-    }
+    Graph g1;
+    vector<vector<int>> graph = {
+        // clang-format off
+                {NO_EDGE, NO_EDGE, 2      },
+                {NO_EDGE, NO_EDGE, 1      },
+                {3,       1,       NO_EDGE}
+        // clang-format on
+    };
+    g1.loadGraph(graph);
+
+    Graph g2 = g1--;
+
+    vector<vector<int>> expected_g1 = {
+        // clang-format off
+                {NO_EDGE, NO_EDGE, 1      },
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {2,       NO_EDGE, NO_EDGE}
+        // clang-format on
+    };
+
+    CHECK(g1.getGraph() == expected_g1);  // check if the adjacency matrix have the same values
+    CHECK(g2.getGraph() == graph);        // check if the adjacency matrix have the same values
+    CHECK(&g1 != &g2);                    // check if the address is different
 }
 
 TEST_CASE("*") {
@@ -694,8 +915,80 @@ TEST_CASE("*") {
     }
 
     SUBCASE("(Graph * int) and (int * Graph)") {
-        SUBCASE("undirected graph") {}
-        SUBCASE("directed graph") {}
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        SUBCASE("Graph * int") {
+            Graph g2 = g1 * 2;
+
+            vector<vector<int>> expected = {
+                // clang-format off
+                {NO_EDGE, 2,       2      },
+                {2,       NO_EDGE, 2      },
+                {2,       2,       NO_EDGE}
+                // clang-format on
+            };
+
+            CHECK(g2.getGraph() == expected);  // check if the adjacency matrix have the same values
+
+            graph = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {NO_EDGE, NO_EDGE, 2      },
+                {NO_EDGE, 5,       NO_EDGE}
+                // clang-format on
+            };
+            g1.loadGraph(graph);
+
+            g2 = g1 * 2;
+
+            expected = {
+                // clang-format off
+                {NO_EDGE, 2,       2      },
+                {NO_EDGE, NO_EDGE, 4      },
+                {NO_EDGE, 10,      NO_EDGE}
+                // clang-format on
+            };
+
+            CHECK(g2.getGraph() == expected);  // check if the adjacency matrix have the same values
+
+        }
+
+        SUBCASE("int * Graph") {
+            Graph g2 = 2 * g1;
+
+            vector<vector<int>> expected = {
+                // clang-format off
+                {NO_EDGE, 2,       2      },
+                {2,       NO_EDGE, 2      },
+                {2,       2,       NO_EDGE}
+                // clang-format on
+            };
+
+            CHECK(g2.getGraph() == expected);  // check if the adjacency matrix have the same values
+        }
+
+        SUBCASE("Graph * 0") {
+            Graph g2 = g1 * 0;
+
+            vector<vector<int>> expected = {
+                // clang-format off
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE},
+                {NO_EDGE, NO_EDGE, NO_EDGE}
+                // clang-format on
+            };
+
+            CHECK(g2.getGraph() == expected);  // check if the adjacency matrix have the same values
+        }
+
     }
 }
 
@@ -706,8 +999,48 @@ TEST_CASE("*=") {
     }
 
     SUBCASE("Graph * int") {
-        SUBCASE("undirected graph") {}
-        SUBCASE("directed graph") {}
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        g1 *= 2;
+
+        vector<vector<int>> expected = {
+            // clang-format off
+            {NO_EDGE, 2,       2      },
+            {2,       NO_EDGE, 2      },
+            {2,       2,       NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == expected);  // check if the adjacency matrix have the same values
+
+        graph = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {NO_EDGE, NO_EDGE, 2      },
+            {NO_EDGE, 5,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        g1 *= 2;
+
+        expected = {
+            // clang-format off
+            {NO_EDGE, 2,       2      },
+            {NO_EDGE, NO_EDGE, 4      },
+            {NO_EDGE, 10,      NO_EDGE}
+            // clang-format on
+        };
+
+        CHECK(g1.getGraph() == expected);  // check if the adjacency matrix have the same values
     }
 }
 

@@ -209,9 +209,9 @@ class Graph {
      * If the weight of an edge is -1, then the edge will be removed.
      */
     Graph operator++(int) {
-        Graph g = *this;
-        g.modifyEdgeWeights([](int weight) { return weight + 1; });
-        return g;
+        Graph g = *this;  // copy the current graph
+        ++(*this);        // call the ++ operator on the original graph
+        return g;         // return the copy of the original graph (without the increment)
     }
 
     /**
@@ -234,9 +234,9 @@ class Graph {
      * If the weight of an edge is 1, then the edge will be removed.
      */
     Graph operator--(int) {
-        Graph g = *this;
-        g.modifyEdgeWeights([](int weight) { return weight - 1; });
-        return g;
+        Graph g = *this;  // copy the current graph
+        --(*this);        // call the -- operator on the original graph
+        return g;         // return the copy of the original graph (without the decrement)
     }
 
     /**
