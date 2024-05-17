@@ -56,22 +56,6 @@ void Graph::printAdjMat(std::ostream& out) const {
     }
 }
 
-size_t Graph::getNumEdges() const {
-    size_t count_edges = 0;
-    for (size_t i = 0; i < adjMat.size(); i++) {
-        for (size_t j = 0; j < adjMat[i].size(); j++) {
-            if (adjMat[i][j] != NO_EDGE) {
-                count_edges++;
-            }
-        }
-    }
-
-    // if the graph is undirected, the number of edges is half
-    if (!this->isDirected) {
-        count_edges /= 2;
-    }
-    return count_edges;
-}
 
 void Graph::updateData() {
     this->isDirected = false;
@@ -100,7 +84,7 @@ void Graph::updateData() {
         }
     }
 
-    if (this->isDirected) {
+    if (!this->isDirected) {
         this->numEdges /= 2;
     }
 }

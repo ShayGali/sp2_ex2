@@ -26,7 +26,7 @@ class Graph {
     bool isDirected;
     bool isWeighted;
     bool haveNegativeEdgeWeight;
-    int numEdges;
+    size_t numEdges;
 
     /**
      * @brief modify the weights of the edges in the graph using a function
@@ -98,7 +98,7 @@ class Graph {
      * @brief get the number of vertices and edges in the graph
      * @return size_t the number of edges in the graph (|E|)
      */
-    size_t getNumEdges() const;
+    size_t getNumEdges() const { return numEdges; }
 
     /**
      * @brief check if the graph is directed
