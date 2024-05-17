@@ -1265,22 +1265,42 @@ TEST_CASE("<") {
     SUBCASE("directed graph") {}
 }
 
-TEST_CASE(">") {
-    SUBCASE("undirected graph") {}
-    SUBCASE("directed graph") {}
-}
-
-TEST_CASE("<=") {
-    SUBCASE("undirected graph") {}
-    SUBCASE("directed graph") {}
-}
-
-TEST_CASE(">=") {
-    SUBCASE("undirected graph") {}
-    SUBCASE("directed graph") {}
-}
-
 TEST_CASE("<<") {
-    SUBCASE("undirected graph") {}
-    SUBCASE("directed graph") {}
+    SUBCASE("simple case") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        stringstream ss;
+        ss << g1;
+
+        string expected = "[X, 1, 1],\n[1, X, 1],\n[1, 1, X]";
+
+        CHECK(ss.str() == expected);
+    }
+
+    SUBCASE("empty graph") {
+        Graph g1;
+        vector<vector<int>> graph = {
+            // clang-format off
+            {NO_EDGE, NO_EDGE, NO_EDGE},
+            {NO_EDGE, NO_EDGE, NO_EDGE},
+            {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+        g1.loadGraph(graph);
+
+        stringstream ss;
+        ss << g1;
+
+        string expected = "[X, X, X],\n[X, X, X],\n[X, X, X]";
+
+        CHECK(ss.str() == expected);
+    }
 }

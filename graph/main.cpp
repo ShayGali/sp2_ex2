@@ -1,3 +1,4 @@
+#include <fstream>  // Include the <fstream> header file
 #include <iostream>
 #include <vector>
 
@@ -34,6 +35,11 @@ int main() {
     cout << g3.isDirectedGraph() << endl;
     cout << g3.getNumEdges() << endl;
     cout << g3 << endl;
+
+    // write g3 to a file
+    ofstream out("graph.txt");
+    out << g3;
+    out.close();
 
     return 0;
 }

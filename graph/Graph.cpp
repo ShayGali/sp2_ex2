@@ -11,7 +11,6 @@ using namespace shayg;
 
 using std::invalid_argument;
 
-
 void Graph::loadGraph(const vector<vector<int>>& adjMat) {
     this->adjMat = adjMat;
     /*
@@ -34,28 +33,44 @@ void Graph::loadGraph(const vector<vector<int>>& adjMat) {
 }
 
 void Graph::printGraph(std::ostream& out) const {
-    int count_edges = getNumEdges();
     if (this->isDirected) {
-        out << "Directed graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
+        out << "Directed graph with " << getNumVertices() << " vertices and " << getNumEdges() << " edges." << std::endl;
     } else {
-        out << "Undirected graph with " << adjMat.size() << " vertices and " << count_edges << " edges." << std::endl;
+        out << "Undirected graph with " << getNumVertices() << " vertices and " << getNumEdges() << " edges." << std::endl;
     }
 }
 
 void Graph::printAdjMat(std::ostream& out) const {
-    for (size_t i = 0; i < adjMat.size(); i++) {
-        // out << i << ": ";
-        for (size_t j = 0; j < adjMat[i].size(); j++) {
+    for (size_t i = 0; i < getNumVertices() - 1; i++) {
+        out << "[";
+        for (size_t j = 0; j < getNumVertices() - 1; j++) {
             if (adjMat[i][j] != NO_EDGE) {
-                out << adjMat[i][j] << " ";
+                out << adjMat[i][j] << ", ";
             } else {
-                out << "X ";
+                out << "X, ";
             }
         }
-        out << std::endl;
+        if (adjMat[i][getNumVertices() - 1] != NO_EDGE) {
+            out << adjMat[i][getNumVertices() - 1] << "]," << '\n';
+        } else {
+            out << "X]," << '\n';
+        }
+    }
+
+    out << "[";
+    for (size_t j = 0; j < getNumVertices() - 1; j++) {
+        if (adjMat[getNumVertices() - 1][j] != NO_EDGE) {
+            out << adjMat[getNumVertices() - 1][j] << ", ";
+        } else {
+            out << "X, ";
+        }
+    }
+    if (adjMat[getNumVertices() - 1][getNumVertices() - 1] != NO_EDGE) {
+        out << adjMat[getNumVertices() - 1][getNumVertices() - 1] << "]";
+    } else {
+        out << "X]";
     }
 }
-
 
 void Graph::updateData() {
     this->isDirected = false;
@@ -63,10 +78,9 @@ void Graph::updateData() {
     this->haveNegativeEdgeWeight = false;
     this->numEdges = 0;
 
-    for (size_t i = 0; i < adjMat.size(); i++) {
-        for (size_t j = 0; j < adjMat[i].size(); j++) {
+    for (size_t i = 0; i < getNumVertices(); i++) {
+        for (size_t j = 0; j < getNumVertices(); j++) {
             if (adjMat[i][j] != NO_EDGE) {
-
                 this->numEdges++;
 
                 if (adjMat[i][j] != 1) {
@@ -92,7 +106,6 @@ void Graph::updateData() {
 // ~~~ helper functions for the operators ~~~
 
 void Graph::modifyEdgeWeights(function<int(int)> func) {
-
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
             if (adjMat[u][v] != NO_EDGE) {
@@ -101,7 +114,6 @@ void Graph::modifyEdgeWeights(function<int(int)> func) {
                     adjMat[u][v] = NO_EDGE;
                 } else {
                     adjMat[u][v] = res;
-
                 }
             }
         }
@@ -114,7 +126,6 @@ void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) 
     if (this->getNumVertices() != other.getNumVertices()) {
         throw std::invalid_argument("The two graphs have different number of vertices.");
     }
-
 
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
