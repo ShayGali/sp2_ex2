@@ -105,7 +105,7 @@ void Graph::updateData() {
 
 // ~~~ helper functions for the operators ~~~
 
-void Graph::modifyEdgeWeights(function<int(int)> func) {
+void Graph::modifyEdgeWeights(const function<int(int)>& func) {
     for (size_t u = 0; u < getNumVertices(); u++) {
         for (size_t v = 0; v < getNumVertices(); v++) {
             if (adjMat[u][v] != NO_EDGE) {
@@ -122,7 +122,7 @@ void Graph::modifyEdgeWeights(function<int(int)> func) {
     updateData();
 }
 
-void Graph::modifyEdgeWeights(const Graph& other, function<int(int, int)> func) {
+void Graph::modifyEdgeWeights(const Graph& other, const function<int(int, int)>& func) {
     if (this->getNumVertices() != other.getNumVertices()) {
         throw std::invalid_argument("The two graphs have different number of vertices.");
     }
@@ -209,8 +209,9 @@ Graph Graph::operator*(const Graph& other) const {
             }
             int sum = 0;
             for (size_t k = 0; k < getNumVertices(); k++) {
-                if (adjMat[i][k] != NO_EDGE && other.adjMat[k][j] != NO_EDGE)
+                if (adjMat[i][k] != NO_EDGE && other.adjMat[k][j] != NO_EDGE) {
                     sum += adjMat[i][k] * other.adjMat[k][j];
+                }
             }
             if (sum != 0) {
                 g.adjMat[i][j] = sum;
@@ -252,14 +253,17 @@ bool Graph::operator<(const Graph& other) const {
     // compare the number of edges
     size_t edgeA = this->getNumEdges();
     size_t edgeB = other.getNumEdges();
-
+    
     if (edgeA < edgeB) {
         return true;
-    } else if (edgeA > edgeB) {
-        return false;
-    } else {  // if the number of edges is the same
-        return getNumVertices() < other.getNumVertices();
     }
+
+    if (edgeA > edgeB) {
+        return false;
+    }
+
+    // if the number of edges is the same
+    return getNumVertices() < other.getNumVertices();
 }
 
 std::ostream& shayg::operator<<(std::ostream& os, const Graph& graph) {  //~~~ the shayg:: is needed because the operator is defined in the shayg namespace ~~~//

@@ -12,8 +12,8 @@
 using std::function;
 using std::vector;
 
-#define INF std::numeric_limits<int>::max()  // represent infinity
-#define NO_EDGE 0                            // represent no edge between two vertices as infinity
+constexpr int INF = std::numeric_limits<int>::max();  // represent infinity
+constexpr int NO_EDGE = 0;                            // represent no edge between two vertices as infinity
 
 namespace shayg {
 
@@ -33,7 +33,7 @@ class Graph {
      * @note if func return 0, the edge will be removed.
      * @param func the function that will be applied to the weights of the edges, will take the current weight as an argument and change it.
      */
-    void modifyEdgeWeights(function<int(int)> func);
+    void modifyEdgeWeights(const function<int(int)>& func);
 
     /**
      * @brief modify the weights of the edges in the graph using a function
@@ -42,7 +42,7 @@ class Graph {
      * @param func the function that will be applied to the weights of the edges, will take the current weight and the weight of the other graph as arguments and change the current weight with the result of the function.
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
      */
-    void modifyEdgeWeights(const Graph& other, function<int(int, int)> func);
+    void modifyEdgeWeights(const Graph& other, const function<int(int, int)>& func);
 
     /**
      * @brief update the isWeighted and haveNegativeEdgeWeight fields if needed.

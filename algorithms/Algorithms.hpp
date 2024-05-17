@@ -1,7 +1,7 @@
 /**
  * @author Shay Gali
  * @link shay.gali@msmail.ariel.ac.il
-*/
+ */
 #include <algorithm>
 #include <iostream>
 #include <string>
@@ -61,7 +61,7 @@ class Algorithms {
 
         NegativeCycleException(size_t detectedCycleStart, vector<int> parentList) {
             int cycleVertices = detectedCycleStart;
-            
+
             // make sure that we in the cycle
             for (size_t i = 0; i < parentList.size(); i++) {
                 cycleVertices = parentList[(size_t)cycleVertices];
@@ -81,7 +81,7 @@ class Algorithms {
             this->cycle = cycle;
         }
 
-        virtual const char* what() const throw() {
+        const char* what() const throw() override {
             return "Graph contains a negative-weight cycle";
         }
     };

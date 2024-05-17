@@ -10,7 +10,6 @@ VALGRIND_FLAGS=-v --leak-check=full --show-leak-kinds=all --error-exitcode=99
 SOURCES= ../graph/Graph.cpp ../algorithms/Algorithms.cpp
 OBJECTS=$(subst .cpp,.o,$(SOURCES)) # replace .cpp with .o in SOURCES
 TEST_SOURCES=test.cpp TestCounter.cpp GraphTest.cpp
-# TEST_SOURCES=GraphTest.cpp TestCounter.cpp
 TEST_OBJECTS=$(subst .cpp,.o,$(TEST_SOURCES))
 
 .PHONY: clean test graph algorithms valgrind tidy

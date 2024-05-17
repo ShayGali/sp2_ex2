@@ -17,7 +17,7 @@ using namespace std;
 /**
  * helper function to check if the adjacency matrixes are equal
  */
-bool checkMatrixes(const vector<vector<int>>& m1, const vector<vector<int>>& m2, vector<vector<int>>& expected, function<int(int, int)> op) {
+bool checkMatrixes(const vector<vector<int>>& m1, const vector<vector<int>>& m2, vector<vector<int>>& expected, const function<int(int, int)>& op) {
     for (size_t i = 0; i < m1.size(); i++) {
         for (size_t j = 0; j < m1.size(); j++) {
             if (m1[i][j] == NO_EDGE && m2[i][j] == NO_EDGE) {  // if they are both NO_EDGE - the expected value should be NO_EDGE
@@ -387,6 +387,7 @@ TEST_CASE("Binary -") {
 }
 
 TEST_CASE("+=") {
+    function<int(int, int)> op = [](int a, int b) { return a + b; };
     SUBCASE("undirected graph") {
         Graph g1, g2;
         vector<vector<int>> graph1, graph2;
@@ -413,7 +414,7 @@ TEST_CASE("+=") {
             g2.loadGraph(graph2);
 
             g1 += g2;
-            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
             CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
             CHECK(g1.isDirectedGraph() == false);
             CHECK(g1.getNumEdges() == 3);
@@ -440,7 +441,7 @@ TEST_CASE("+=") {
             g2.loadGraph(graph2);
 
             g1 += g2;
-            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
 
             CHECK(matrixCheckResult == true);               // check if the adjacency matrix have the correct values
             CHECK(g1.isHaveNegativeEdgeWeight() == false);  // check if the graph have negative edge weight
@@ -473,7 +474,7 @@ TEST_CASE("+=") {
             g2.loadGraph(graph2);
 
             g1 += g2;
-            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
             CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
             CHECK(g1.getNumEdges() == 5);
 
@@ -503,7 +504,7 @@ TEST_CASE("+=") {
 
                 g1 += g2;
 
-                matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+                matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
                 CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
                 CHECK(g1.getNumEdges() == 3);
                 CHECK(g1.isDirectedGraph() == false);
@@ -536,7 +537,7 @@ TEST_CASE("+=") {
             g2.loadGraph(graph2);
 
             g1 += g2;
-            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a + b; });
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
             CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
             CHECK(g1.getNumEdges() == 6);
             CHECK(g1.isDirectedGraph() == true);
@@ -545,6 +546,7 @@ TEST_CASE("+=") {
 }
 
 TEST_CASE("-=") {
+    function<int(int, int)> op = [](int a, int b) { return a - b; };
     SUBCASE("undirected graph") {
         Graph g1, g2;
         vector<vector<int>> graph1, graph2;
@@ -571,7 +573,7 @@ TEST_CASE("-=") {
             g2.loadGraph(graph2);
 
             g1 -= g2;
-            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a - b; });
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
             CHECK(matrixCheckResult == true);  // check if the adjacency matrix have the correct values
             CHECK(g1.isDirectedGraph() == false);
             CHECK(g1.getNumEdges() == 3);
@@ -600,7 +602,7 @@ TEST_CASE("-=") {
             g2.loadGraph(graph2);
 
             g1 -= g2;
-            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a - b; });
+            matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
 
             CHECK(matrixCheckResult == true);               // check if the adjacency matrix have the correct values
             CHECK(g1.isHaveNegativeEdgeWeight() == false);  // check if the graph have negative edge
@@ -635,7 +637,7 @@ TEST_CASE("-=") {
 
         g1 -= g2;
 
-        matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), [](int a, int b) { return a - b; });
+        matrixCheckResult = checkMatrixes(graph1, graph2, g1.getGraph(), op);
         CHECK(matrixCheckResult);  // check if the adjacency matrix have the correct values
         CHECK(g1.getNumEdges() == 4);
         CHECK(g1.isHaveNegativeEdgeWeight() == true);
@@ -958,7 +960,6 @@ TEST_CASE("*") {
             };
 
             CHECK(g2.getGraph() == expected);  // check if the adjacency matrix have the same values
-
         }
 
         SUBCASE("int * Graph") {
@@ -988,7 +989,6 @@ TEST_CASE("*") {
 
             CHECK(g2.getGraph() == expected);  // check if the adjacency matrix have the same values
         }
-
     }
 }
 
