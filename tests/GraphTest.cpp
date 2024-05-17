@@ -120,10 +120,11 @@ TEST_CASE("unary -") {
 
 TEST_CASE("Binary +") {
     function<int(int, int)> op = [](int a, int b) { return a + b; };
+    Graph g1, g2, g3;
+    vector<vector<int>> graph1, graph2, graph3;
+    bool matrixCheckResult = false;
+
     SUBCASE("undirected graph") {
-        Graph g1, g2, g3;
-        vector<vector<int>> graph1, graph2, graph3;
-        bool matrixCheckResult;
         SUBCASE("Test case 1 - add two graphs") {
             graph1 = {
                 // clang-format off
@@ -215,9 +216,6 @@ TEST_CASE("Binary +") {
     }
 
     SUBCASE("directed graph") {
-        Graph g1, g2, g3;
-        vector<vector<int>> graph1, graph2, graph3;
-        bool matrixCheckResult;
         graph1 = {
             // clang-format off
             {NO_EDGE, 1,       1      },
@@ -245,9 +243,6 @@ TEST_CASE("Binary +") {
     }
 
     SUBCASE("Dir + Undir") {
-        Graph g1, g2, g3;
-        vector<vector<int>> graph1, graph2, graph3;
-        bool matrixCheckResult;
         graph1 = {
             // clang-format off
             {NO_EDGE, 1,       1      },
@@ -278,12 +273,10 @@ TEST_CASE("Binary +") {
 
 TEST_CASE("Binary -") {
     function<int(int, int)> op = [](int a, int b) { return a - b; };
-
+    Graph g1, g2, g3;
+    vector<vector<int>> graph1, graph2, graph3;
+    bool matrixCheckResult = false;
     SUBCASE("undirected graph") {
-        Graph g1, g2, g3;
-        vector<vector<int>> graph1, graph2, graph3;
-        bool matrixCheckResult;
-
         SUBCASE("Test case 1 - simple case") {
             graph1 = {
                 // clang-format off
@@ -345,10 +338,6 @@ TEST_CASE("Binary -") {
     }
 
     SUBCASE("directed graph") {
-        Graph g1, g2, g3;
-        vector<vector<int>> graph1, graph2, graph3;
-        bool matrixCheckResult;
-
         graph1 = {
             // clang-format off
             {NO_EDGE, 1,       1      },
@@ -388,11 +377,10 @@ TEST_CASE("Binary -") {
 
 TEST_CASE("+=") {
     function<int(int, int)> op = [](int a, int b) { return a + b; };
+    Graph g1, g2;
+    vector<vector<int>> graph1, graph2;
+    bool matrixCheckResult = false;
     SUBCASE("undirected graph") {
-        Graph g1, g2;
-        vector<vector<int>> graph1, graph2;
-        bool matrixCheckResult;
-
         SUBCASE("Test case 1 - simple case") {
             graph1 = {
                 // clang-format off
@@ -452,7 +440,7 @@ TEST_CASE("+=") {
         SUBCASE("directed graph") {
             Graph g1, g2;
             vector<vector<int>> graph1, graph2;
-            bool matrixCheckResult;
+            bool matrixCheckResult = false;
 
             graph1 = {
                 // clang-format off
@@ -481,7 +469,7 @@ TEST_CASE("+=") {
             SUBCASE("udir+udir = dir") {
                 Graph g1, g2;
                 vector<vector<int>> graph1, graph2;
-                bool matrixCheckResult;
+                bool matrixCheckResult = false;
 
                 graph1 = {
                     // clang-format off
@@ -515,7 +503,7 @@ TEST_CASE("+=") {
         SUBCASE("Dir + Undir") {
             Graph g1, g2;
             vector<vector<int>> graph1, graph2;
-            bool matrixCheckResult;
+            bool matrixCheckResult = false;
 
             graph1 = {
                 // clang-format off
@@ -547,11 +535,10 @@ TEST_CASE("+=") {
 
 TEST_CASE("-=") {
     function<int(int, int)> op = [](int a, int b) { return a - b; };
+    Graph g1, g2;
+    vector<vector<int>> graph1, graph2;
+    bool matrixCheckResult = false;
     SUBCASE("undirected graph") {
-        Graph g1, g2;
-        vector<vector<int>> graph1, graph2;
-        bool matrixCheckResult;
-
         SUBCASE("Test case 1 - simple case") {
             graph1 = {
                 // clang-format off
@@ -612,10 +599,6 @@ TEST_CASE("-=") {
         }
     }
     SUBCASE("directed graph") {
-        Graph g1, g2;
-        vector<vector<int>> graph1, graph2;
-        bool matrixCheckResult;
-
         graph1 = {
             // clang-format off
             {NO_EDGE, 1,       1      },
@@ -645,9 +628,10 @@ TEST_CASE("-=") {
 }
 
 TEST_CASE("prefix ++") {
+    Graph g1, g2;
+    vector<vector<int>> graph, expected;
     SUBCASE("simple case") {
-        Graph g1;
-        vector<vector<int>> graph = {
+        graph = {
             // clang-format off
                 {NO_EDGE, 1,       1      },
                 {1,       NO_EDGE, 1      },
@@ -656,9 +640,9 @@ TEST_CASE("prefix ++") {
         };
         g1.loadGraph(graph);
 
-        Graph g2 = ++g1;
+        g2 = ++g1;
 
-        vector<vector<int>> expected = {
+        expected = {
             // clang-format off
                 {NO_EDGE, 2,       2      },
                 {2,       NO_EDGE, 2      },
@@ -673,8 +657,7 @@ TEST_CASE("prefix ++") {
         CHECK(g2.isDirectedGraph() == false);     // check if the graph is directed
     }
     SUBCASE("remove edges") {
-        Graph g1;
-        vector<vector<int>> graph = {
+        graph = {
             // clang-format off
                 {NO_EDGE, 1,       -1     },
                 {1,       NO_EDGE, 1      },
@@ -683,9 +666,9 @@ TEST_CASE("prefix ++") {
         };
         g1.loadGraph(graph);
 
-        Graph g2 = ++g1;
+        g2 = ++g1;
 
-        vector<vector<int>> expected = {
+        expected = {
             // clang-format off
                 {NO_EDGE, 2,       0      },
                 {2,       NO_EDGE, 2      },
@@ -702,8 +685,7 @@ TEST_CASE("prefix ++") {
     }
 
     SUBCASE("empty graph") {
-        Graph g1;
-        vector<vector<int>> graph = {
+        graph = {
             // clang-format off
                 {NO_EDGE, NO_EDGE, NO_EDGE},
                 {NO_EDGE, NO_EDGE, NO_EDGE},
@@ -712,9 +694,9 @@ TEST_CASE("prefix ++") {
         };
         g1.loadGraph(graph);
 
-        Graph g2 = ++g1;
+        g2 = ++g1;
 
-        vector<vector<int>> expected = {
+        expected = {
             // clang-format off
                 {NO_EDGE, NO_EDGE, NO_EDGE},
                 {NO_EDGE, NO_EDGE, NO_EDGE},
@@ -731,9 +713,10 @@ TEST_CASE("prefix ++") {
 }
 
 TEST_CASE("postfix ++") {
+    Graph g1, g2;
+    vector<vector<int>> graph, expected_g1, expected_g2;
     SUBCASE("simple case") {
-        Graph g1;
-        vector<vector<int>> graph = {
+        graph = {
             // clang-format off
                 {NO_EDGE, 1,       1      },
                 {1,       NO_EDGE, 1      },
@@ -742,8 +725,8 @@ TEST_CASE("postfix ++") {
         };
         g1.loadGraph(graph);
 
-        Graph g2 = g1++;
-        vector<vector<int>> expected_g1 = {
+        g2 = g1++;
+        expected_g1 = {
             // clang-format off
                 {NO_EDGE, 2,       2      },
                 {2,       NO_EDGE, 2      },
@@ -751,7 +734,7 @@ TEST_CASE("postfix ++") {
             // clang-format on
         };
 
-        vector<vector<int>> expected_g2 = {
+        expected_g2 = {
             // clang-format off
                 {NO_EDGE, 1,       1      },
                 {1,       NO_EDGE, 1      },
@@ -764,8 +747,7 @@ TEST_CASE("postfix ++") {
         CHECK(&g1 != &g2);                    // check if the address is different
     }
     SUBCASE("remove edges") {
-        Graph g1;
-        vector<vector<int>> graph = {
+        graph = {
             // clang-format off
                 {NO_EDGE, 1,       -1     },
                 {1,       NO_EDGE, 1      },
@@ -774,9 +756,9 @@ TEST_CASE("postfix ++") {
         };
         g1.loadGraph(graph);
 
-        Graph g2 = g1++;
+        g2 = g1++;
 
-        vector<vector<int>> expected_g1 = {
+        expected_g1 = {
             // clang-format off
                 {NO_EDGE, 2,       0      },
                 {2,       NO_EDGE, 2      },
@@ -784,7 +766,7 @@ TEST_CASE("postfix ++") {
             // clang-format on
         };
 
-        vector<vector<int>> expected_g2 = {
+        expected_g2 = {
             // clang-format off
                 {NO_EDGE, 1,       -1     },
                 {1,       NO_EDGE, 1      },
@@ -799,8 +781,7 @@ TEST_CASE("postfix ++") {
     }
 
     SUBCASE("empty graph") {
-        Graph g1;
-        vector<vector<int>> graph = {
+        graph = {
             // clang-format off
                 {NO_EDGE, NO_EDGE, NO_EDGE},
                 {NO_EDGE, NO_EDGE, NO_EDGE},
@@ -809,7 +790,7 @@ TEST_CASE("postfix ++") {
         };
         g1.loadGraph(graph);
 
-        Graph g2 = g1++;
+        g2 = g1++;
 
         vector<vector<int>> expected = {
             // clang-format off
