@@ -352,7 +352,7 @@ class Graph {
 
     /**
      * @brief Overload the < operator
-     * To check if A < B,  we use the adjacency matrices of the two graphs.
+     * To check if A < B, we use the adjacency matrices of the two graphs.
      * Graph A is less than graph B if:
      * 1. the adjacency matrix of A is submatrix of the adjacency matrix of B.
      * 2. otherwise, |E(A)| < |E(B)| (number of edges in A is less than the number of edges in B)

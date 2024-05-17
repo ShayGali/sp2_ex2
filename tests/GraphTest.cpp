@@ -25,6 +25,7 @@ TEST_CASE("Test loadGraph") {
             // clang-format on
         };
         g.loadGraph(graph);
+        cout << g << "\n";
         vector<vector<int>> adjMat = g.getGraph();
         CHECK(std::equal(graph.begin(), graph.end(), adjMat.begin()));
         CHECK(g.isDirectedGraph() == false);

@@ -30,18 +30,26 @@ each graph object saves the following properties:
 * haveNegativeEdgeWeight : a boolean that represents if the graph have negative edge weights or not.
 
 
-To initialize a `Graph` object, you need to pass if the graph is directed or not. (default is undirected)
+To initialize a `Graph` object, you can use the following code:
 ```cpp
-Graph g(true);  // directed graph
-
-Graph g(false); // undirected graph
-Graph g;        // undirected graph
+Graph g;
 ```
+a graph with symmetric adjacency matrix will be undirected, and a graph with asymmetric adjacency matrix will be directed.
+
+for example, the following code:
+```cpp
+Graph g;
+g.loadGraph({{0, 1}, {1, 0}}); // g is undirected graph
+
+Graph g;
+g.loadGraph({{0, 1}, {0, 0}}); // g is directed graph
+```
+
 
 We define the constants `INF` and `NO_EDGE` to represent the infinity and no edge in the graph.
 
 - `INF` = `std::numeric_limits<int>::max()` = `2147483647` (so make sure not to do `INF + INF` so you don't get overflow)
-- `NO_EDGE` = `INF`, but can be any other value that is not used in the graph.
+- `NO_EDGE` = `0`, but can be any other value that is not used in the graph.
 
 ### Functions
 
@@ -139,5 +147,84 @@ The way we can find a negative cycle in the graph is to add new vertex `s` and c
 > Note: the Bellman-Ford algorithm **DON'T** work with undirected graphs with negative weights.
 
 
+## Graph Operators
+in assignment 2, we will implement operators for the graph class.
+
+### Arithmetic operators
+to change the graph value, we add to methods to the graph class (same name, different parameters):
+1. `void modifyEdgeWeights(const function<int(int)>& func)`
+2. `void modifyEdgeWeights(const Graph& other, const function<int(int, int)>& func)`
+
+we can pass to the method a function that will change the value of the edge in the graph, if we pass another graph, we can pass a function that will change the value of the of the current edge with the value of the two edges of the two graphs.
+
+we overload the following operators:
+1. `+` : unary +, binary +, +=, prefix ++, postfix ++
+2. `-` : unary -, binary -, -=, prefix --, postfix --
+3. `*` : `Graph * int`, `Graph * Graph`, `*=` (for both)
+4. `/` : `Graph / int`, `/=`
+
+### Comparison operators
+we have this two definitions for the comparison operators:
+let G1 and G2 be two graphs, and A and B be the adjacency matrices of G1 and G2 respectively.
+1. G1 = G2 if A = B, or if not G1 < G2 and not G2 < G1
+2. G1 < G2 if A ⊂ B, or (A ⊄ B and B ⊄ A and |E(G1)| < |E(G2)|) or (A ⊄ B and B ⊄ A and |E(G1)| = |E(G2)| and |V(G1)| < |V(G2)|)
+
+with this definitions, we can use the following operators:
+1. `==`, `!=`
+2. `<`, `<=`, `>`, `>=`
+
+### Stream operators
+we diffine the `<<` operator to print the graph in the following format:
+```
+[X, 1, 1],
+[1, X, 1],
+[1, 1, X]
+```
+where `X` represent the `NO_EDGE` value.
+
 ## Test
 I wrote a full README file for the test, you can find it [here](./tests/README.md)
+
+## Usage
+
+you can see how to use the code it the [test](./tests) files, or in the [main.cpp](./main.cpp) file.
+
+you can clone the repository and run the following commands:
+
+* build the code:
+```bash
+make all
+```
+
+* run the code:
+  - you can use make run to run the code:
+  - or you can build the code and run it manually:
+
+run the following command for building and running the code:
+```bash
+make run
+```
+
+run the following commands for building and running the code manually:
+```bash
+make all
+./main
+```
+
+* test the code:
+```bash
+make test
+```
+* check for memory leaks with valgrind: (make sure that you have valgrind installed)
+```bash
+make valgrind
+```
+* check for code style:
+```
+make tidy
+```
+
+* clean the code:
+```bash
+make clean
+```
