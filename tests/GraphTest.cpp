@@ -1048,7 +1048,6 @@ TEST_CASE("*") {
 
         g3 = g1 * g2;
 
-        cout << g3 << endl;
 
         CHECK(g3.getGraph() == expected);  // check if the adjacency matrix have the same values
         CHECK(g3.isDirectedGraph() == true);
