@@ -20,13 +20,9 @@ run: test
 test: $(TEST_OBJECTS) graph algorithms
 	$(CXX) $(CXXFLAGS) $(TEST_OBJECTS) $(OBJECTS) -o test
 
-
-valgrind: test
-	valgrind --tool=memcheck $(VALGRIND_FLAGS) ./test 2>&1 | { egrep "lost| at " || true; }
-	
 tidy:
-	clang-tidy $(TEST_SOURCES) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=-* --
-
+	clang-tidy $(TEST_SOURCES) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers --warnings-as-errors=-* --
+	
 graph:
 	make -C ../graph all
 

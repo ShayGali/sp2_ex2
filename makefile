@@ -29,8 +29,11 @@ valgrind: $(PROG)
 	make -C tests valgrind
 
 tidy:
-	clang-tidy $(SOURCES) $(TESTS_SOURCES) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=-* --
+	make -C tests tidy
+	make -C graph tidy
+	make -C algorithms tidy
 
+	
 graph:
 	make -C graph all
 
