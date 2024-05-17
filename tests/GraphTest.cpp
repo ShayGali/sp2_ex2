@@ -25,7 +25,6 @@ TEST_CASE("Test loadGraph") {
             // clang-format on
         };
         g.loadGraph(graph);
-        cout << g << "\n";
         vector<vector<int>> adjMat = g.getGraph();
         CHECK(std::equal(graph.begin(), graph.end(), adjMat.begin()));
         CHECK(g.isDirectedGraph() == false);
@@ -83,7 +82,6 @@ TEST_CASE("Test loadGraph") {
         };
         CHECK_THROWS_AS(g.loadGraph(graph3), std::invalid_argument);
     }
-
 }
 
 TEST_CASE("Test printGraph") {
@@ -1018,8 +1016,42 @@ TEST_CASE("postfix --") {
 
 TEST_CASE("*") {
     SUBCASE("Graph * Graph") {
-        SUBCASE("undirected graph") {}
-        SUBCASE("directed graph") {}
+        Graph g1, g2, g3;
+        vector<vector<int>> graph1, graph2, expected;
+
+        graph1 = {
+            // clang-format off
+            {NO_EDGE, 1,       NO_EDGE},
+            {1,       NO_EDGE, 1      },
+            {NO_EDGE, 1,       NO_EDGE}
+            // clang-format on
+        };
+
+        graph2 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 2      },
+            {1,       2,       NO_EDGE}
+            // clang-format on
+        };
+
+        expected = {
+            // clang-format off
+            {NO_EDGE, NO_EDGE, 2      },
+            {1,       NO_EDGE, 1      },
+            {1,       NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+
+        g1.loadGraph(graph1);
+        g2.loadGraph(graph2);
+
+        g3 = g1 * g2;
+
+        cout << g3 << endl;
+
+        CHECK(g3.getGraph() == expected);  // check if the adjacency matrix have the same values
+        CHECK(g3.isDirectedGraph() == true);
     }
 
     SUBCASE("(Graph * int) and (int * Graph)") {

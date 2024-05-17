@@ -202,9 +202,10 @@ Graph Graph::operator*(const Graph& other) const {
 
     // do matrix multiplication on the adjacency matrices
     // adjList[i][j] = sum(adjList[i][k] * adjList[k][j]) for all k
+    // the diagonal of the matrix must be NO_EDGE
     for (size_t i = 0; i < getNumVertices(); i++) {
-        for (size_t j = 0; j < adjMat[i].size(); j++) {
-            if (adjMat[i][j] == NO_EDGE) {
+        for (size_t j = 0; j < getNumVertices(); j++) {
+            if (i == j) {  // the diagonal of the matrix must be NO_EDGE
                 continue;
             }
             int sum = 0;
@@ -220,6 +221,8 @@ Graph Graph::operator*(const Graph& other) const {
             }
         }
     }
+
+    g.updateData();
     return g;
 }
 
@@ -253,7 +256,7 @@ bool Graph::operator<(const Graph& other) const {
     // compare the number of edges
     size_t edgeA = this->getNumEdges();
     size_t edgeB = other.getNumEdges();
-    
+
     if (edgeA < edgeB) {
         return true;
     }
