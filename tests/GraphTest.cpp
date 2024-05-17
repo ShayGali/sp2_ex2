@@ -14,6 +14,130 @@
 using namespace shayg;
 using namespace std;
 
+TEST_CASE("Test loadGraph") {
+    Graph g;
+    SUBCASE("undirected graph") {
+        vector<vector<int>> graph = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        g.loadGraph(graph);
+        vector<vector<int>> adjMat = g.getGraph();
+        CHECK(std::equal(graph.begin(), graph.end(), adjMat.begin()));
+        CHECK(g.isDirectedGraph() == false);
+        CHECK(g.isWeightedGraph() == false);
+        CHECK(g.isHaveNegativeEdgeWeight() == false);
+        CHECK(g.getNumEdges() == 3);
+    }
+
+    SUBCASE("directed graph") {
+        vector<vector<int>> graph = {
+            // clang-format off
+            {NO_EDGE, 1,       -1     },
+            {NO_EDGE, NO_EDGE, 2      },
+            {NO_EDGE, NO_EDGE, NO_EDGE}
+            // clang-format on
+        };
+        g.loadGraph(graph);
+        vector<vector<int>> adjMat = g.getGraph();
+        CHECK(std::equal(graph.begin(), graph.end(), adjMat.begin()));
+        CHECK(g.isDirectedGraph() == true);
+        CHECK(g.isWeightedGraph() == true);
+        CHECK(g.isHaveNegativeEdgeWeight() == true);
+        CHECK(g.getNumEdges() == 3);
+    }
+
+    SUBCASE("empty graph") {
+        vector<vector<int>> graph = {};
+        g.loadGraph(graph);
+        vector<vector<int>> adjMat = g.getGraph();
+        CHECK(std::equal(graph.begin(), graph.end(), adjMat.begin()));
+        CHECK(g.isDirectedGraph() == false);
+        CHECK(g.isWeightedGraph() == false);
+        CHECK(g.isHaveNegativeEdgeWeight() == false);
+        CHECK(g.getNumEdges() == 0);
+    }
+
+    SUBCASE("errors") {
+        // the graph is not a square matrix
+        vector<vector<int>> graph2 = {
+            // clang-format off
+            {NO_EDGE, 1,       1},
+            {1,       NO_EDGE, 1}
+            // clang-format on
+        };
+        CHECK_THROWS_AS(g.loadGraph(graph2), std::invalid_argument);
+
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // the diagonal of the matrix is not NO_EDGE
+        vector<vector<int>> graph3 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       1,       1      },
+            {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+        CHECK_THROWS_AS(g.loadGraph(graph3), std::invalid_argument);
+    }
+
+}
+
+TEST_CASE("Test printGraph") {
+    // Redirect std::cout to a buffer
+    std::stringstream buffer;
+    std::streambuf* prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
+
+    Graph g_dir;
+    Graph g_undir;
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    vector<vector<int>> graph = {
+        // clang-format off
+        {NO_EDGE, 1,       NO_EDGE},
+        {1,       NO_EDGE, 1      },
+        {1,       1,       NO_EDGE}
+        // clang-format on
+    };
+
+    g_dir.loadGraph(graph);
+
+    g_dir.printGraph();
+
+    // Restore std::cout to its original buffer
+    std::cout.rdbuf(prevcoutbuf);
+    CHECK(buffer.str() == "Directed graph with 3 vertices and 5 edges.\n");
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    graph = {
+        // clang-format off
+        {NO_EDGE, 1,       1      },
+        {1,       NO_EDGE, 1      },
+        {1,       1,       NO_EDGE}
+        // clang-format on
+    };
+    prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
+    buffer.str("");
+    g_undir.loadGraph(graph);
+    g_undir.printGraph();
+    std::cout.rdbuf(prevcoutbuf);
+
+    CHECK(buffer.str() == "Undirected graph with 3 vertices and 3 edges.\n");
+
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    prevcoutbuf = std::cout.rdbuf(buffer.rdbuf());
+    buffer.str("");
+    vector<vector<int>> emptyGraph = {};
+    g_undir.loadGraph(emptyGraph);
+    g_undir.printGraph();
+
+    // Restore std::cout to its original buffer
+    std::cout.rdbuf(prevcoutbuf);
+    CHECK(buffer.str() == "Undirected graph with 0 vertices and 0 edges.\n");
+}
+
 /**
  * helper function to check if the adjacency matrixes are equal
  */
