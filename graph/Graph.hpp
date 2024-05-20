@@ -123,7 +123,7 @@ class Graph {
      * @brief Unary + operator
      * @return Graph a copy of the current graph
      */
-    Graph operator+() { return *this; }
+    Graph operator+() const { return *this; }
 
     /**
      * @brief Binary + operator.
@@ -133,7 +133,7 @@ class Graph {
      * @return Graph the sum of the two graphs
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
      */
-    Graph operator+(const Graph& other) {
+    Graph operator+(const Graph& other) const{
         Graph newGraph = *this;  // copy the current graph
         newGraph.modifyEdgeWeights(other, [](int a, int b) { return a + b; });
         return newGraph;
@@ -156,7 +156,7 @@ class Graph {
      * will return a new graph that is the negative of the current graph. (the negative of the adjacency matrix)
      * @return Graph the negative of the current graph
      */
-    Graph operator-() {
+    Graph operator-() const {
         Graph g = *this;
         g.modifyEdgeWeights([](int weight) { return -weight; });
         return g;
@@ -170,7 +170,7 @@ class Graph {
      * @return A new graph that is the difference of the two graphs
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
      */
-    Graph operator-(const Graph& other) {
+    Graph operator-(const Graph& other) const{
         Graph newGraph = *this;  // copy the current graph
         newGraph.modifyEdgeWeights(other, [](int a, int b) { return a - b; });
         return newGraph;
