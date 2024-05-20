@@ -133,7 +133,7 @@ class Graph {
      * @return Graph the sum of the two graphs
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
      */
-    Graph operator+(const Graph& other) const{
+    Graph operator+(const Graph& other) const {
         Graph newGraph = *this;  // copy the current graph
         newGraph.modifyEdgeWeights(other, [](int a, int b) { return a + b; });
         return newGraph;
@@ -170,7 +170,7 @@ class Graph {
      * @return A new graph that is the difference of the two graphs
      * @throw invalid_argument if the two graphs have different number of vertices (the adjacency matrices are not the same size)
      */
-    Graph operator-(const Graph& other) const{
+    Graph operator-(const Graph& other) const {
         Graph newGraph = *this;  // copy the current graph
         newGraph.modifyEdgeWeights(other, [](int a, int b) { return a - b; });
         return newGraph;
