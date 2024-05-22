@@ -24,10 +24,17 @@ struct ReporterCounter : public ConsoleReporter {
         std::cout << "\033[1;32mNumber of test cases passed: \033[0m" << run_stats.numTestCases - run_stats.numTestCasesFailed << std::endl;
         std::cout << "\033[1;31mNumber of test cases failed: \033[0m" << run_stats.numTestCasesFailed << std::endl;
 
-        if(run_stats.numTestCasesFailed > 0) {
-            std::cout << "\n\n\033[1;31m~~~ Some tests failed! ~~~\033[0m\n" << std::endl;
+        if (run_stats.numTestCasesFailed > 0) {
+            if (run_stats.numTestCasesFailed == run_stats.numTestCases) {
+                std::cout << "\n\n\033[1;31m~~~ All tests failed! GO FIX YOUR CODE LOSER! ~~~\033[0m\n"
+                          << std::endl;
+            } else {
+                std::cout << "\n\n\033[1;31m~~~ Some tests failed! ~~~\033[0m\n"
+                          << std::endl;
+            }
         } else {
-            std::cout << "\n\n\033[1;32m~~~ All tests passed! ~~~\033[0m\n" << std::endl;
+            std::cout << "\n\n\033[1;32m~~~ All tests passed! ~~~\033[0m\n"
+                      << std::endl;
         }
     }
 };

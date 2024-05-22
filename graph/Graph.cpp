@@ -243,7 +243,7 @@ bool Graph::operator<(const Graph& other) const {
     }
 
     // if the two graphs have the same adjacency matrix, return false
-    if (matrixEqual(this->adjMat, other.adjMat)) {
+    if (this->adjMat == other.adjMat) {
         return false;
     }
 
