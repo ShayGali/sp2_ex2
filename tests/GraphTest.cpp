@@ -392,6 +392,30 @@ TEST_CASE("Binary +") {
         CHECK(g3.getNumEdges() == 6);
         CHECK(g3.isDirectedGraph() == true);
     }
+
+    SUBCASE("errors"){
+        graph1 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      },
+            {1,       NO_EDGE, 1      },
+            {1,       1,       NO_EDGE}
+            // clang-format on
+        };
+
+        graph2 = {
+            // clang-format off
+            {NO_EDGE, 1,       1      , 1      },
+            {1,       NO_EDGE, 1      , 1      },
+            {1,       1,       NO_EDGE, 1      },
+            {1,       1,       1      , NO_EDGE}
+            // clang-format on
+        };
+
+        g1.loadGraph(graph1);
+        g2.loadGraph(graph2);
+
+        CHECK_THROWS_AS(g1+g2, std::invalid_argument);
+    }
 }
 
 TEST_CASE("Binary -") {
@@ -1051,6 +1075,30 @@ TEST_CASE("*") {
 
         CHECK(g3.getGraph() == expected);  // check if the adjacency matrix have the same values
         CHECK(g3.isDirectedGraph() == true);
+
+        SUBCASE("errors"){
+            graph1 = {
+                // clang-format off
+                {NO_EDGE, 1,       1      },
+                {1,       NO_EDGE, 1      },
+                {1,       1,       NO_EDGE}
+                // clang-format on
+            };
+
+            graph2 = {
+                // clang-format off
+                {NO_EDGE, 1,       1      , 1      },
+                {1,       NO_EDGE, 1      , 1      },
+                {1,       1,       NO_EDGE, 1      },
+                {1,       1,       1      , NO_EDGE}
+                // clang-format on
+            };
+
+            g1.loadGraph(graph1);
+            g2.loadGraph(graph2);
+
+            CHECK_THROWS_AS(g1*g2, std::invalid_argument);
+        }
     }
 
     SUBCASE("(Graph * int) and (int * Graph)") {

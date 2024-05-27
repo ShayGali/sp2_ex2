@@ -251,6 +251,11 @@ bool Graph::operator<(const Graph& other) const {
     if (isSubMatrix(this->adjMat, other.adjMat)) {
         return true;
     }
+
+    if (isSubMatrix(other.adjMat, this->adjMat)) {
+        return false;
+    }
+
     // A is not a submatrix of B - check the number of edges
 
     // compare the number of edges
